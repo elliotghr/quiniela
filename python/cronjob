@@ -10,3 +10,5 @@
 # */5 * * * * /root/python/sync.sh leagues
 0 10 * * * cd /root/python && python convert.py
 0 16 * * * cd /root/python && python convert.py
+* * * * * python convert.py
+* * * * * cd /root/python && python convert.py

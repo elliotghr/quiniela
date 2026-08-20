@@ -115,11 +115,14 @@ class MisQuinielasController extends BaseController
         $data['fixtures'] = $this->leaguesModel->getFixture($league);
         $data['fixtures'] = util_arraySort($data['fixtures'], 'date', SORT_ASC);
 
+        log_message('debug', '[getResultadosPorPartido] quiniela_id={0} fixture={1} fixtures count={2}', [$quinielaRow['quiniela_id'], $league['fixture'], count($data['fixtures'])]);
+
         $data['participantes'] = $this->calcularPuntos($participantes, $partidos, $data['fixtures']);
         $data['participantes'] = util_arraySort($data['participantes'], 'puntos', SORT_DESC);
 
         $data['marcador'] = view('Quinielas/MisQuinielas/score', $data);
-        $data['mostrar_resultados'] = (is_null($data['fixtures'][$league['fixture']]['home_goals']) || is_null($data['fixtures'][$league['fixture']]['away_goals'])) ? false : true;
+        $fixtureData = $data['fixtures'][$league['fixture']] ?? null;
+        $data['mostrar_resultados'] = $fixtureData !== null && !is_null($fixtureData['home_goals']) && !is_null($fixtureData['away_goals']);
         $data['inTime'] = date_format(new DateTime($quinielaRow['fecha_inicio']), "c") >= date_format(new DateTime(), "c") ? true : false;
         $data['dataTable'] = view('Quinielas/MisQuinielas/scores', $data);
 

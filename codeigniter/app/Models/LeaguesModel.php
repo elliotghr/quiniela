@@ -43,6 +43,8 @@ class LeaguesModel extends Model
                 $fixtures[$fixture["fixture"]["id"]]["away_name"] = $fixture["teams"]['away']["name"];
                 $fixtures[$fixture["fixture"]["id"]]["away_logo"] = $fixture["teams"]['away']["logo"];
                 $fixtures[$fixture["fixture"]["id"]]["away_goals"] = $fixture["goals"]['away'];
+                $fixtures[$fixture["fixture"]["id"]]["round"] = $fixture["league"]['round'];
+
             }
         }
 
@@ -57,7 +59,7 @@ class LeaguesModel extends Model
         $fixtures = [];
 
         foreach ($data["response"] as $fixture) {
-            if ($fixture["league"]["id"] == $league['id'] && $fixture["league"]["season"] == $league['season'] && in_array($fixture["league"]["round"], $league['rounds']) && $fixture["fixture"]["id"] == $league['fixture']) {
+            if ($fixture["league"]["id"] == $league['id'] && $fixture["league"]["season"] == $league['season'] && $fixture["fixture"]["id"] == $league['fixture']) {
                 $fixtures[$fixture["fixture"]["id"]]["id"] = $fixture["fixture"]["id"];
                 $fixtures[$fixture["fixture"]["id"]]["date"] = $fixture["fixture"]["date"];
                 $fixtures[$fixture["fixture"]["id"]]["home_name"] = $fixture["teams"]['home']["name"];
