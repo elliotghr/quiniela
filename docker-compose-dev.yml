@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  ms-mongo-web:
+    image: ms-mongo-web
+    build:
+      dockerfile: Dockerfile.dev
+    container_name: ms-mongo-web
+    restart: always
+    ports:
+      - 8444:80
+    volumes:
+      - ./codeigniter:/var/www/html
+      - ms-mongo-data:/var/www/html/writable/data
+    env_file:
+      - ./composer/.env
+
+  ms-mongo-sync:
+    build:
+      dockerfile: Dockerfile.python
+    container_name: ms-mongo-sync
+    restart: always
+    volumes:
+      - ./python:/root/python
+      - ms-mongo-data:/root/python/data
+    env_file:
+      - ./python/.env
+
+  ms-mongo-db:
+    image: mysql:8.3.0
+    container_name: ms-mongo-db 
+    restart: always
+    env_file:
+      - mysql-containers/development/env/.env
+    ports:
+      - 3396:3306
+    volumes:
+      - ms-mongo-db-vol:/var/lib/mysql
+      - ./mysql-containers/development/config:/etc/mysql/conf.d
+      - ./mysql-containers/development/env:/root/env
+      - ./mysql-containers/development/scripts:/root/scripts
+
+volumes:
+  ms-mongo-db-vol:
+    name: ms-mongo-db-vol
+  ms-mongo-data:
+    name: ms-mongo-data

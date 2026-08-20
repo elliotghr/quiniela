@@ -1,0 +1,29 @@
+FROM python:3.14-slim
+
+# Actualizar el sistema e instalar dependencias necesarias
+RUN apt-get update
+
+# Carpeta de trabajo dentro del contenedor
+WORKDIR /root/python/
+
+# Actualizar pip a la última versión
+RUN pip install --upgrade pip
+COPY ./python/requirements.txt requirements.txt
+RUN pip install -r requirements.txt
+
+# Configuración zona horario dentro y fuera del container
+RUN apt-get install -y tzdata
+ENV TZ=America/Mexico_City
+
+# Configurar crontab
+RUN apt-get install -y cron
+COPY ./python/cronjob /etc/cron.d/cronjob
+RUN chmod 0644 /etc/cron.d/cronjob
+RUN crontab /etc/cron.d/cronjob
+
+# Configurar archivo de inicio
+RUN mkdir -p /utils/scripts
+COPY ./ms-start-python.sh /utils/scripts/ms-start.sh
+RUN chmod a+x /utils/scripts/ms-start.sh
+
+ENTRYPOINT ["bash", "/utils/scripts/ms-start.sh"]

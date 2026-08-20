@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  ms-quinieland-web:
+    image: ms-quinieland-web
+    build:
+      dockerfile: Dockerfile.prod
+    container_name: ms-quinieland-web
+    restart: always
+    ports:
+      - 8066:80
+    volumes:
+      - ./codeigniter:/var/www/html
+      - ms-quinieland-data:/var/www/html/writable/data
+    env_file:
+      - ./composer/.env
+
+  ms-quinieland-sync:
+    build:
+      dockerfile: Dockerfile.python
+    container_name: ms-quinieland-sync
+    restart: always
+    volumes:
+      - ./python:/root/python
+      - ms-quinieland-data:/root/python/data
+    env_file:
+      - ./python/.env
+
+  ms-quinieland-db:
+    image: mysql:8.3.0
+    container_name: ms-quinieland-db 
+    restart: always
+    env_file:
+      - mysql-containers/production/env/.env
+    ports:
+      - 3366:3306
+    volumes:
+      - ms-quinieland-db-vol:/var/lib/mysql
+      - ./mysql-containers/production/config:/etc/mysql/conf.d
+      - ./mysql-containers/production/env:/root/env
+      - ./mysql-containers/production/scripts:/root/scripts
+
+volumes:
+  ms-quinieland-db-vol:
+    name: ms-quinieland-db-vol
+  ms-quinieland-data:
+    name: ms-quinieland-data

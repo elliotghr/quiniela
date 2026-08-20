@@ -1,0 +1,49 @@
+FROM php:8.3-apache
+
+# ACTUALIZAR EL SISTEMA
+RUN apt-get update
+
+# INSTALAR DEPENDENCIAS DE CI 4
+RUN apt-get install -y unzip \
+    && apt-get install -y libicu-dev \
+    && docker-php-ext-configure intl \
+    && docker-php-ext-install intl mysqli
+
+# Configuración zona horario dentro y fuera del container
+RUN apt-get install -y tzdata
+ENV TZ=America/Mexico_City
+
+# Usar la configuración por default
+RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
+
+# MODIFICAR EL DOCUMENT ROOT DE APACHE
+ENV APACHE_DOCUMENT_ROOT /var/www/html/public
+RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
+RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
+
+# INSTALAR COMPOSER
+WORKDIR /var/www/html
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+WORKDIR /var/www/html/public
+
+# # INSTALAR NPM
+RUN apt-get update && apt-get install -y npm
+
+# # INSTALAR SASS CON NPM
+RUN npm -g install -g sass
+
+# CONFIGURAR APACHE
+RUN a2enmod rewrite
+
+# Configuración de PHP para ocultar versión
+RUN echo "expose_php=Off" > /usr/local/etc/php/conf.d/security.ini
+
+# CONFIGURAR ARCHIVO DE INICIO
+RUN mkdir -p /utils/scripts
+COPY ./ms-start.sh /utils/scripts/ms-start.sh
+RUN chmod a+x /utils/scripts/ms-start.sh
+
+WORKDIR /var/www/html
+
+ENTRYPOINT ["bash", "/utils/scripts/ms-start.sh"]

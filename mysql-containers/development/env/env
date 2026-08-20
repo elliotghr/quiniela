@@ -1,0 +1,9 @@
+# VARIABLES PARA EL ENTORNO DE MYSQL
+MYSQL_ROOT_PASSWORD="root-pass-sample"
+MYSQL_DATABASE="db-name-sample"
+MYSQL_USER="user-sample"
+MYSQL_PASSWORD="user-pass-sample"
+TZ="America/Mexico_City"
+
+# VARIABLE ADICIONAL PARA EL BACKUP/RESTORE
+MYSQL_HOST: "hostname"

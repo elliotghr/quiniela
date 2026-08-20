@@ -1,0 +1,32 @@
+[
+    {
+        "fotmob_league_id": "47",
+        "fotmob_season": "2026/2027",
+        "league_id": 39,
+        "league_name": "Premier League",
+        "league_country": "England",
+        "league_logo": "https://images.fotmob.com/image_resources/logo/leaguelogo/47.png",
+        "league_flag": "https://flagcdn.com/gb-eng.svg",
+        "year": 2026
+    },
+    {
+        "fotmob_league_id": "87",
+        "fotmob_season": "2026/2027",
+        "league_id": 40,
+        "league_name": "LaLiga",
+        "league_country": "Spain",
+        "league_logo": "https://images.fotmob.com/image_resources/logo/leaguelogo/87.png",
+        "league_flag": "https://flagcdn.com/es.svg",
+        "year": 2026
+    },
+    {
+        "fotmob_league_id": "55",
+        "fotmob_season": "2026/2027",
+        "league_id": 41,
+        "league_name": "Serie A",
+        "league_country": "Italy",
+        "league_logo": "https://images.fotmob.com/image_resources/logo/leaguelogo/55.png",
+        "league_flag": "https://flagcdn.com/it.svg",
+        "year": 2026
+    }
+]
