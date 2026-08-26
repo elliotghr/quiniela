@@ -119,11 +119,13 @@ class MisQuinielasController extends BaseController
 
         $data['participantes'] = $this->calcularPuntos($participantes, $partidos, $data['fixtures']);
         $data['participantes'] = util_arraySort($data['participantes'], 'puntos', SORT_DESC);
+        log_message('debug', '[getResultadosPorPartido] participantes={0}', [json_encode($data['participantes'])]);
 
         $data['marcador'] = view('Quinielas/MisQuinielas/score', $data);
         $fixtureData = $data['fixtures'][$league['fixture']] ?? null;
         $data['mostrar_resultados'] = $fixtureData !== null && !is_null($fixtureData['home_goals']) && !is_null($fixtureData['away_goals']);
-        $data['inTime'] = date_format(new DateTime($quinielaRow['fecha_inicio']), "c") >= date_format(new DateTime(), "c") ? true : false;
+        // la fecha de inicio es mayor o igual al momento actual?
+        $data['inTime'] = date_format(new DateTime($quinielaRow['fecha_inicio']), "c") >= date_format(new DateTime(), "c");
         $data['dataTable'] = view('Quinielas/MisQuinielas/scores', $data);
 
         return json_encode($data);

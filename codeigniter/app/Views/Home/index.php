@@ -2,9 +2,6 @@
 <?php $mostrar = env('quiniela.home.mostrar'); ?>
 <div class="container">
     <form id="formData" method="post" action="#">
-        <div class="alert alert-primary mt-3 mb-4" role="alert">
-            Hola <?= $userRow['nombre'] ?>
-        </div>
         <div class="row">
             <div class="col-lg-6 col-12">
                 <div class="shadow bg-white p-4 mb-4 rounded-3">
@@ -26,7 +23,7 @@
                     <?php $next = 0; ?>
                     <?php $prev = 0; ?>
                     <?php $stopPrev = false; ?>
-                    <div class="table-container" style="max-height: 600px; overflow-y: auto;">
+                    <div class="table-container" style="max-height: 500px; overflow-y: auto;">
                         <table class="table table-striped mt-3">
                             <thead>
                                 <tr>
@@ -111,7 +108,7 @@
                     <?php if ($prev === 0): ?>
                         No hay marcadores que mostrar
                     <?php else: ?>
-                        <div class="table-container" style="max-height: 600px; overflow-y: auto;">
+                        <div class="table-container" style="max-height: 500px; overflow-y: auto;">
                             <table class="table table-striped mt-3">
                                 <thead>
                                     <tr>
