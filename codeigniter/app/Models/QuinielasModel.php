@@ -6,6 +6,19 @@ use CodeIgniter\Model;
 
 class QuinielasModel extends Model
 {
+    public function getQuinielaLeagues()
+    {
+        $sql = "SELECT q.liga, q.temporada
+        FROM Quiniela q 
+        INNER JOIN Pronostico p 
+        ON p.quiniela_id = q.id 
+        WHERE p.usuario_id = :usuario_id:;";
+
+        $query = $this->db->query($sql, ['usuario_id' => getUserSession()]);
+
+        return $query->getResultArray();
+    }
+
     public function getParticipantesPartidos($quiniela)
     {
         $sql = "SELECT	Q.id AS 'quiniela_id',
@@ -36,7 +49,7 @@ class QuinielasModel extends Model
     }
     public function getParticipantes($quiniela)
     {
-		$sql = "SELECT	PCO.id AS 'pronostico_id',
+        $sql = "SELECT	PCO.id AS 'pronostico_id',
 						PCO.quiniela_id AS 'quiniela_id',
 						PCO.usuario_id AS 'usuario_id',
 						U.usuario AS 'usuario_usuario',
@@ -54,9 +67,9 @@ class QuinielasModel extends Model
 				WHERE	PCO.quiniela_id = :quiniela_id:
 				ORDER BY DU.nombre, DU.apellido_paterno, DU.apellido_materno, U.usuario, PCO.consecutivo ASC";
 
-		$query = $this->db->query($sql, $quiniela);
+        $query = $this->db->query($sql, $quiniela);
 
-		return $query;
+        return $query;
     }
 
     public function getQuinielas($id)
@@ -164,7 +177,7 @@ class QuinielasModel extends Model
         return $query;
     }
 
-	public function getPronosticos($pronosticos)
+    public function getPronosticos($pronosticos)
     {
         $sql = "SELECT	PCO.id AS 'pronostico_id',
                         PCO.quiniela_id AS 'quiniela_id',
@@ -223,8 +236,7 @@ class QuinielasModel extends Model
             ->get()
             ->getResultArray();
 
-        if (!empty($pronosticoIds))
-        {
+        if (!empty($pronosticoIds)) {
             $ids = array_column($pronosticoIds, 'id');
             $this->db->table('Partido')->whereIn('pronostico_id', $ids)->delete();
         }
@@ -256,11 +268,11 @@ class QuinielasModel extends Model
         $builder->updateBatch($partidos, 'id');
     }
 
-	public function savePronostico($pronostico)
+    public function savePronostico($pronostico)
     {
         $builder = $this->db->table('Pronostico');
-		$builder->where('id', $pronostico['id']);
-		$builder->where('quiniela_id', $pronostico['quiniela_id']);
+        $builder->where('id', $pronostico['id']);
+        $builder->where('quiniela_id', $pronostico['quiniela_id']);
         $builder->update($pronostico);
     }
 }
