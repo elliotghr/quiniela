@@ -1,56 +1,139 @@
 FROM php:8.3-apache
 
-# ACTUALIZAR EL SISTEMA
+# ==========================================
+# ACTUALIZAR SISTEMA
+# ==========================================
+
 RUN apt-get update
 
-# INSTALAR DEPENDENCIAS DE CI 4
-RUN apt-get install -y unzip \
-    && apt-get install -y libicu-dev \
-    && docker-php-ext-configure intl \
-    && docker-php-ext-install intl mysqli
 
-# Configuración zona horario dentro y fuera del container
-RUN apt-get install -y tzdata
+# ==========================================
+# INSTALAR DEPENDENCIAS DE CODEIGNITER 4
+# ==========================================
+
+RUN apt-get install -y \
+        unzip \
+        libicu-dev \
+        tzdata \
+        npm \
+    && docker-php-ext-configure intl \
+    && docker-php-ext-install intl mysqli \
+    && rm -rf /var/lib/apt/lists/*
+
+
+# ==========================================
+# ZONA HORARIA
+# ==========================================
+
 ENV TZ=America/Mexico_City
 
-# Usar la configuración por default
+
+# ==========================================
+# CONFIGURACIÓN PHP
+# ==========================================
+
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 
-# MODIFICAR EL DOCUMENT ROOT DE APACHE
-ENV APACHE_DOCUMENT_ROOT /var/www/html/public
-RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
+RUN echo "expose_php=Off" \
+    > /usr/local/etc/php/conf.d/security.ini
 
+
+# ==========================================
+# CONFIGURAR APACHE
+# ==========================================
+
+ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
+
+RUN sed -ri \
+    -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' \
+    /etc/apache2/sites-available/*.conf
+
+
+# Deshabilitar cualquier MPM adicional
+# y dejar únicamente mpm_prefork
+RUN a2dismod mpm_event mpm_worker mpm_prefork || true \
+    && a2enmod mpm_prefork \
+    && a2enmod rewrite
+
+
+# ==========================================
 # INSTALAR COMPOSER
+# ==========================================
+
 WORKDIR /var/www/html
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+RUN curl -sS https://getcomposer.org/installer \
+    | php -- \
+    --install-dir=/usr/local/bin \
+    --filename=composer
+
+
+# ==========================================
+# COPIAR PROYECTO CODEIGNITER
+# ==========================================
+
+COPY ./codeigniter/ /var/www/html/
+
+
+# ==========================================
+# INSTALAR DEPENDENCIAS PHP
+# ==========================================
+
+RUN composer install --no-dev --optimize-autoloader
+
+
+# ==========================================
+# INSTALAR SASS
+# ==========================================
+
+RUN npm install -g sass
+
+
+# ==========================================
+# INSTALAR DEPENDENCIAS NPM
+# ==========================================
 
 WORKDIR /var/www/html/public
 
-# # INSTALAR NPM
-RUN apt-get update && apt-get install -y npm
+RUN npm install
 
-# # INSTALAR SASS CON NPM
-RUN npm -g install -g sass
 
-# CONFIGURAR APACHE
-RUN a2dismod mpm_event mpm_worker mpm_prefork || true \
-    && a2enmod mpm_prefork rewrite
-# RUN a2enmod rewrite headers ssl \
-#     && echo "ServerSignature Off\nServerTokens Prod" > /etc/apache2/conf-available/security.conf \
-#     && echo "Header always unset Server" >> /etc/apache2/conf-available/security.conf \
-#     && echo "Header unset X-Powered-By" >> /etc/apache2/conf-available/security.conf \
-#     && a2enconf security
+# ==========================================
+# COMPILAR SASS
+# ==========================================
 
-# Configuración de PHP para ocultar versión
-RUN echo "expose_php=Off" > /usr/local/etc/php/conf.d/security.ini
+RUN sass \
+    /var/www/html/public/css/custom-bootstrap.scss \
+    /var/www/html/public/css/custom-bootstrap.css
 
-# CONFIGURAR ARCHIVO DE INICIO
+
+# ==========================================
+# PERMISOS DE CODEIGNITER
+# ==========================================
+
+RUN chmod -R 777 /var/www/html/writable
+
+
+# ==========================================
+# SCRIPT DE INICIO
+# ==========================================
+
 RUN mkdir -p /utils/scripts
+
 COPY ./ms-start.sh /utils/scripts/ms-start.sh
-RUN chmod a+x /utils/scripts/ms-start.sh
+
+RUN chmod +x /utils/scripts/ms-start.sh
+
+
+# ==========================================
+# DIRECTORIO DE TRABAJO
+# ==========================================
 
 WORKDIR /var/www/html
 
-COPY ./codeigniter/ /var/www/html/
+
+# ==========================================
+# INICIAR CONTENEDOR
+# ==========================================
 
 ENTRYPOINT ["bash", "/utils/scripts/ms-start.sh"]
