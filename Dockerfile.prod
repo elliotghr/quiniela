@@ -1,104 +1,60 @@
 FROM php:8.3-apache
 
-# ==========================================
-# DEPENDENCIAS DEL SISTEMA
-# ==========================================
-
+# ACTUALIZAR EL SISTEMA E INSTALAR DEPENDENCIAS
 RUN apt-get update \
     && apt-get install -y \
         unzip \
+        curl \
         libicu-dev \
         tzdata \
     && docker-php-ext-configure intl \
     && docker-php-ext-install intl mysqli \
     && rm -rf /var/lib/apt/lists/*
 
-
-# ==========================================
-# ZONA HORARIA
-# ==========================================
-
+# CONFIGURAR ZONA HORARIA
 ENV TZ=America/Mexico_City
 
-
-# ==========================================
-# CONFIGURACIÓN PHP
-# ==========================================
-
+# CONFIGURAR PHP
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 
-RUN echo "expose_php=Off" \
-    > /usr/local/etc/php/conf.d/security.ini
-
-
-# ==========================================
-# CONFIGURACIÓN APACHE
-# ==========================================
-
+# MODIFICAR DOCUMENT ROOT DE APACHE
 ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
 
 RUN sed -ri \
     -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' \
-    /etc/apache2/sites-available/*.conf
+    /etc/apache2/sites-available/*.conf \
+    /etc/apache2/conf-available/*.conf
 
-RUN a2dismod mpm_event mpm_worker \
+# CONFIGURAR APACHE
+RUN a2dismod mpm_event mpm_worker mpm_prefork 2>/dev/null || true \
     && a2enmod mpm_prefork \
     && a2enmod rewrite
 
+# CONFIGURACIÓN DE PHP PARA OCULTAR VERSIÓN
+RUN echo "expose_php=Off" > /usr/local/etc/php/conf.d/security.ini
 
-# ==========================================
 # INSTALAR COMPOSER
-# ==========================================
+RUN curl -sS https://getcomposer.org/installer \
+    | php -- --install-dir=/usr/local/bin --filename=composer
 
+# CONFIGURAR DIRECTORIO DE TRABAJO
 WORKDIR /var/www/html
 
-RUN curl -sS https://getcomposer.org/installer \
-    | php -- \
-    --install-dir=/usr/local/bin \
-    --filename=composer
-
-
-# ==========================================
-# COPIAR CODEIGNITER
-# ==========================================
-
+# COPIAR PROYECTO
 COPY ./codeigniter/ /var/www/html/
 
-
-# ==========================================
-# INSTALAR DEPENDENCIAS PHP
-# ==========================================
-
-RUN composer install --no-dev --optimize-autoloader
-
-
-# ==========================================
-# PERMISOS
-# ==========================================
-
-RUN chmod -R 777 /var/www/html/writable
-
-
-# ==========================================
-# SCRIPT DE INICIO
-# ==========================================
-
+# CONFIGURAR SCRIPT DE INICIO
 RUN mkdir -p /utils/scripts
 
 COPY ./ms-start.sh /utils/scripts/ms-start.sh
 
 RUN chmod +x /utils/scripts/ms-start.sh
 
+# PERMISOS DE WRITABLE
+RUN chmod -R 777 /var/www/html/writable
 
-# ==========================================
-# DIRECTORIO DE TRABAJO
-# ==========================================
+# EXPONER APACHE
+EXPOSE 80
 
-WORKDIR /var/www/html
-
-
-# ==========================================
-# INICIAR
-# ==========================================
-
+# INICIAR CONTENEDOR
 ENTRYPOINT ["bash", "/utils/scripts/ms-start.sh"]
