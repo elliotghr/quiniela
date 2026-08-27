@@ -1,21 +1,14 @@
 FROM php:8.3-apache
 
 # ==========================================
-# ACTUALIZAR SISTEMA
+# DEPENDENCIAS DEL SISTEMA
 # ==========================================
 
-RUN apt-get update
-
-
-# ==========================================
-# INSTALAR DEPENDENCIAS DE CODEIGNITER 4
-# ==========================================
-
-RUN apt-get install -y \
+RUN apt-get update \
+    && apt-get install -y \
         unzip \
         libicu-dev \
         tzdata \
-        npm \
     && docker-php-ext-configure intl \
     && docker-php-ext-install intl mysqli \
     && rm -rf /var/lib/apt/lists/*
@@ -39,7 +32,7 @@ RUN echo "expose_php=Off" \
 
 
 # ==========================================
-# CONFIGURAR APACHE
+# CONFIGURACIÓN APACHE
 # ==========================================
 
 ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
@@ -48,10 +41,7 @@ RUN sed -ri \
     -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' \
     /etc/apache2/sites-available/*.conf
 
-
-# Deshabilitar cualquier MPM adicional
-# y dejar únicamente mpm_prefork
-RUN a2dismod mpm_event mpm_worker mpm_prefork || true \
+RUN a2dismod mpm_event mpm_worker \
     && a2enmod mpm_prefork \
     && a2enmod rewrite
 
@@ -69,7 +59,7 @@ RUN curl -sS https://getcomposer.org/installer \
 
 
 # ==========================================
-# COPIAR PROYECTO CODEIGNITER
+# COPIAR CODEIGNITER
 # ==========================================
 
 COPY ./codeigniter/ /var/www/html/
@@ -83,32 +73,7 @@ RUN composer install --no-dev --optimize-autoloader
 
 
 # ==========================================
-# INSTALAR SASS
-# ==========================================
-
-RUN npm install -g sass
-
-
-# ==========================================
-# INSTALAR DEPENDENCIAS NPM
-# ==========================================
-
-WORKDIR /var/www/html/public
-
-RUN npm install
-
-
-# ==========================================
-# COMPILAR SASS
-# ==========================================
-
-RUN sass \
-    /var/www/html/public/css/custom-bootstrap.scss \
-    /var/www/html/public/css/custom-bootstrap.css
-
-
-# ==========================================
-# PERMISOS DE CODEIGNITER
+# PERMISOS
 # ==========================================
 
 RUN chmod -R 777 /var/www/html/writable
@@ -133,7 +98,7 @@ WORKDIR /var/www/html
 
 
 # ==========================================
-# INICIAR CONTENEDOR
+# INICIAR
 # ==========================================
 
 ENTRYPOINT ["bash", "/utils/scripts/ms-start.sh"]
