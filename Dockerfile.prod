@@ -61,4 +61,6 @@ RUN chown -R www-data:www-data /var/www/html/writable
 
 WORKDIR /var/www/html
 
-ENTRYPOINT ["bash", "/utils/scripts/ms-start.sh"]
+# ENTRYPOINT ["bash", "/utils/scripts/ms-start.sh"]
+
+CMD ["apache2-foreground"]
