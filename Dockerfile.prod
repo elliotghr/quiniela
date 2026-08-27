@@ -25,14 +25,19 @@ RUN sed -ri \
     /etc/apache2/apache2.conf
 
 # CONFIGURAR APACHE
-RUN a2dismod mpm_event \
-    && a2enmod mpm_prefork \
-    && a2enmod rewrite
+RUN a2enmod rewrite
 
+# DEBUG MPM
 RUN echo "=== MPM ENABLED ===" \
-    && ls -la /etc/apache2/mods-enabled/ | grep mpm || true \
-    && echo "=== APACHE MPM ===" \
-    && apache2ctl -M 2>&1 | grep mpm || true
+    && ls -la /etc/apache2/mods-enabled/ | grep mpm \
+    && echo "=== MPM AVAILABLE ===" \
+    && ls -la /etc/apache2/mods-available/ | grep mpm \
+    && echo "=== APACHE CONFIG TEST ===" \
+    && apache2ctl -t \
+    && echo "=== LOADED MPM ===" \
+    && apache2ctl -M 2>&1 | grep mpm \
+    && echo "=== ALL MPM REFERENCES ===" \
+    && grep -Rni "mpm_" /etc/apache2/
 
 # OCULTAR VERSIÓN DE PHP
 RUN echo "expose_php=Off" \
