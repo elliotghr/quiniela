@@ -4,44 +4,37 @@ FROM php:8.3-apache
 RUN apt-get update \
     && apt-get install -y \
         unzip \
-        curl \
         libicu-dev \
         tzdata \
     && docker-php-ext-configure intl \
     && docker-php-ext-install intl mysqli \
     && rm -rf /var/lib/apt/lists/*
 
-# CONFIGURAR ZONA HORARIA
+# CONFIGURACIÓN DE ZONA HORARIA
 ENV TZ=America/Mexico_City
 
-# CONFIGURAR PHP
+# CONFIGURACIÓN PHP
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 
-# MODIFICAR DOCUMENT ROOT DE APACHE
+# DOCUMENT ROOT DE APACHE
 ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
 
-RUN sed -ri \
-    -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' \
+RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' \
     /etc/apache2/sites-available/*.conf \
-    /etc/apache2/conf-available/*.conf
+    /etc/apache2/apache2.conf
 
 # CONFIGURAR APACHE
 RUN a2dismod mpm_event mpm_worker mpm_prefork 2>/dev/null || true \
-    && a2enmod mpm_prefork \
-    && a2enmod rewrite
+    && a2enmod mpm_prefork rewrite
 
-# CONFIGURACIÓN DE PHP PARA OCULTAR VERSIÓN
+# OCULTAR VERSIÓN DE PHP
 RUN echo "expose_php=Off" > /usr/local/etc/php/conf.d/security.ini
 
 # INSTALAR COMPOSER
-RUN curl -sS https://getcomposer.org/installer \
-    | php -- --install-dir=/usr/local/bin --filename=composer
-
-# CONFIGURAR DIRECTORIO DE TRABAJO
 WORKDIR /var/www/html
 
-# COPIAR PROYECTO
-COPY ./codeigniter/ /var/www/html/
+RUN curl -sS https://getcomposer.org/installer \
+    | php -- --install-dir=/usr/local/bin --filename=composer
 
 # CONFIGURAR SCRIPT DE INICIO
 RUN mkdir -p /utils/scripts
@@ -50,11 +43,12 @@ COPY ./ms-start.sh /utils/scripts/ms-start.sh
 
 RUN chmod +x /utils/scripts/ms-start.sh
 
-# PERMISOS DE WRITABLE
-RUN chmod -R 777 /var/www/html/writable
+# COPIAR PROYECTO
+COPY ./codeigniter/ /var/www/html/
 
-# EXPONER APACHE
-EXPOSE 80
+# PERMISOS DE CODEIGNITER
+RUN chown -R www-data:www-data /var/www/html/writable
 
-# INICIAR CONTENEDOR
+WORKDIR /var/www/html
+
 ENTRYPOINT ["bash", "/utils/scripts/ms-start.sh"]
