@@ -51,4 +51,6 @@ RUN chmod a+x /utils/scripts/ms-start.sh
 
 WORKDIR /var/www/html
 
+COPY ./codeigniter/ /var/www/html/
+
 ENTRYPOINT ["bash", "/utils/scripts/ms-start.sh"]

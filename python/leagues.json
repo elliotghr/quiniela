@@ -28,5 +28,15 @@
         "league_logo": "https://images.fotmob.com/image_resources/logo/leaguelogo/55.png",
         "league_flag": "https://flagcdn.com/it.svg",
         "year": 2026
+    },
+    {
+        "fotmob_league_id": "42",
+        "fotmob_season": "2026/2027",
+        "league_id": 42,
+        "league_name": "Champions League",
+        "league_country": "Europe",
+        "league_logo": "https://images.fotmob.com/image_resources/logo/leaguelogo/42.png",
+        "league_flag": "https://flagcdn.com/eu.svg",
+        "year": 2026
     }
 ]
