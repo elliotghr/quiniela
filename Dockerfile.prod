@@ -25,7 +25,9 @@ RUN sed -ri \
     /etc/apache2/apache2.conf
 
 # CONFIGURAR APACHE
-RUN a2enmod rewrite
+RUN a2dismod mpm_event \
+    && a2enmod mpm_prefork \
+    && a2enmod rewrite
 
 # OCULTAR VERSIÓN DE PHP
 RUN echo "expose_php=Off" \
