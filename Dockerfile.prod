@@ -1,56 +1,75 @@
 FROM php:8.3-apache
 
-# ACTUALIZAR EL SISTEMA
-RUN apt-get update
-
-# INSTALAR DEPENDENCIAS DE CI 4
-RUN apt-get install -y unzip \
-    && apt-get install -y libicu-dev \
+# ACTUALIZAR EL SISTEMA E INSTALAR DEPENDENCIAS
+RUN apt-get update \
+    && apt-get install -y \
+        unzip \
+        libicu-dev \
+        tzdata \
     && docker-php-ext-configure intl \
-    && docker-php-ext-install intl mysqli
+    && docker-php-ext-install intl mysqli \
+    && rm -rf /var/lib/apt/lists/*
 
-# Configuración zona horario dentro y fuera del container
-RUN apt-get install -y tzdata
+# CONFIGURACIÓN DE ZONA HORARIA
 ENV TZ=America/Mexico_City
 
-# Usar la configuración por default
+# CONFIGURACIÓN PHP
 RUN mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 
-# MODIFICAR EL DOCUMENT ROOT DE APACHE
-ENV APACHE_DOCUMENT_ROOT /var/www/html/public
-RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
+# DOCUMENT ROOT DE APACHE
+ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
+
+RUN sed -ri \
+    -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' \
+    /etc/apache2/sites-available/*.conf \
+    /etc/apache2/apache2.conf
+
+# CONFIGURAR APACHE
+RUN a2enmod rewrite
+
+# DEBUG MPM
+RUN echo "=== MPM ENABLED ===" \
+    && ls -la /etc/apache2/mods-enabled/ | grep mpm \
+    && echo "=== MPM AVAILABLE ===" \
+    && ls -la /etc/apache2/mods-available/ | grep mpm \
+    && echo "=== APACHE CONFIG TEST ===" \
+    && apache2ctl -t \
+    && echo "=== LOADED MPM ===" \
+    && apache2ctl -M 2>&1 | grep mpm \
+    && echo "=== ALL MPM REFERENCES ===" \
+    && grep -Rni "mpm_" /etc/apache2/
+
+# OCULTAR VERSIÓN DE PHP
+RUN echo "expose_php=Off" \
+    > /usr/local/etc/php/conf.d/security.ini
 
 # INSTALAR COMPOSER
 WORKDIR /var/www/html
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-WORKDIR /var/www/html/public
+RUN curl -sS https://getcomposer.org/installer \
+    | php -- \
+        --install-dir=/usr/local/bin \
+        --filename=composer
 
-# # INSTALAR NPM
-RUN apt-get update && apt-get install -y npm
-
-# # INSTALAR SASS CON NPM
-RUN npm -g install -g sass
-
-# CONFIGURAR APACHE
-RUN a2dismod mpm_event mpm_worker mpm_prefork || true \
-    && a2enmod mpm_prefork rewrite
-# RUN a2enmod rewrite headers ssl \
-#     && echo "ServerSignature Off\nServerTokens Prod" > /etc/apache2/conf-available/security.conf \
-#     && echo "Header always unset Server" >> /etc/apache2/conf-available/security.conf \
-#     && echo "Header unset X-Powered-By" >> /etc/apache2/conf-available/security.conf \
-#     && a2enconf security
-
-# Configuración de PHP para ocultar versión
-RUN echo "expose_php=Off" > /usr/local/etc/php/conf.d/security.ini
-
-# CONFIGURAR ARCHIVO DE INICIO
+# CONFIGURAR SCRIPT DE INICIO
 RUN mkdir -p /utils/scripts
+
 COPY ./ms-start.sh /utils/scripts/ms-start.sh
-RUN chmod a+x /utils/scripts/ms-start.sh
+
+RUN chmod +x /utils/scripts/ms-start.sh
+
+# COPIAR PROYECTO
+COPY ./codeigniter/ /var/www/html/
+
+# PERMISOS DE CODEIGNITER
+RUN chown -R www-data:www-data /var/www/html/writable
 
 WORKDIR /var/www/html
 
-COPY ./codeigniter/ /var/www/html/
+# CONFIGURACIÓN DE APACHE
+RUN a2enmod rewrite \
+    && echo "ServerName localhost" >> /etc/apache2/apache2.conf
 
-ENTRYPOINT ["bash", "/utils/scripts/ms-start.sh"]
+EXPOSE 80
+
+CMD ["bash", "-c", "a2dismod mpm_event mpm_worker || true; rm -f /etc/apache2/mods-enabled/mpm_event.* /etc/apache2/mods-enabled/mpm_worker.*; a2enmod mpm_prefork; apache2ctl -t; exec apache2-foreground"]
