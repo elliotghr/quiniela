@@ -68,4 +68,4 @@ WORKDIR /var/www/html
 
 # ENTRYPOINT ["bash", "/utils/scripts/ms-start.sh"]
 
-CMD ["apache2-foreground"]
+CMD ["bash", "-c", "echo '=== RUNTIME MPM ==='; ls -la /etc/apache2/mods-enabled/ | grep mpm; echo '=== RUNTIME CONFIG ==='; apache2ctl -t; echo '=== RUNTIME MODULES ==='; apache2ctl -M 2>&1 | grep mpm; echo '=== SLEEP ==='; sleep 3600"]
