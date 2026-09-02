@@ -6,6 +6,7 @@ use App\Controllers\BaseController;
 use App\Models\QuinielasModel;
 use App\Models\LeaguesModel;
 use App\Models\UserModel;
+use App\Libraries\MongoLib;
 use DateTime;
 
 class MisQuinielasController extends BaseController
@@ -291,8 +292,14 @@ class MisQuinielasController extends BaseController
             $league['season'] = $quinielaRow['temporada'];
             $league['rounds'] = explode('|', $quinielaRow['rondas']);
 
-            $fixturePath = WRITEPATH . "data/fixtures/{$league['id']}-{$league['season']}.json";
-            log_message('debug', '[getPartidos] fixture path={0} exists={1}', [$fixturePath, file_exists($fixturePath) ? 'yes' : 'no']);
+            $mongoLib = new MongoLib("quiniela", "partidos");
+            $fixturePath = $mongoLib->getEntry([
+                "parameters.league" => $league['id'],
+                "parameters.season" => $league['season']
+            ]);
+            $fixturePath = json_decode(json_encode($fixturePath), true);
+
+            log_message('debug', '[getPartidos] fixture path={0} exists={1}', [json_encode($fixturePath), !empty($fixturePath) ? 'yes' : 'no']);
             log_message('debug', '[getPartidos] rounds={0}', [json_encode($league['rounds'])]);
 
             $data['fixtures'] = $this->leaguesModel->getFixtures($league);

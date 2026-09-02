@@ -31,8 +31,14 @@ class LeaguesModel extends Model
 
     public function getFixtures($league)
     {
-        $response = file_get_contents(WRITEPATH . "data/fixtures/{$league['id']}-{$league['season']}.json");
-        $data = json_decode($response, true);
+
+        $mongoLib = new MongoLib("quiniela", "partidos");
+        $response = $mongoLib->getEntry([
+            "parameters.league" => $league['id'],
+            "parameters.season" => $league['season']
+        ]);
+
+        $data = json_decode(json_encode($response), true);
 
         $fixtures = [];
 
@@ -85,8 +91,13 @@ class LeaguesModel extends Model
 
     public function getFixture($league)
     {
-        $response = file_get_contents(WRITEPATH . "data/fixtures/{$league['id']}-{$league['season']}.json");
-        $data = json_decode($response, true);
+        $mongoLib = new MongoLib("quiniela", "partidos");
+        $response = $mongoLib->getEntry([
+            "parameters.league" => $league['id'],
+            "parameters.season" => $league['season']
+        ]);
+
+        $data = json_decode(json_encode($response), true);
 
         $fixtures = [];
 
