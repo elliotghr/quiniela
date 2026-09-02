@@ -1,25 +1,28 @@
-"""
-Obtiene fixtures desde la API de Fotmob (RapidAPI) y los convierte
-al esquema de API-Football para compatibilidad con el sistema.
-Soporta múltiples ligas definidas en leagues.json.
-"""
-
 import os
 import json
 import requests
 from datetime import datetime
 from zoneinfo import ZoneInfo
 from dotenv import load_dotenv
+from pymongo import MongoClient
 
 load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), "../node/python/env"))
 
 RAPIDAPI_KEY   = os.getenv("RAPIDAPI_KEY")
-FIXTURES_PATH  = os.getenv("FIXTURES_PATH")
 LEAGUES_CONFIG = os.getenv("LEAGUES_CONFIG")
+MONGO_DSN      = os.getenv("MONGO_DSN")
 
-# ---------- Leer configuración de ligas ----------
-with open(LEAGUES_CONFIG, "r", encoding="utf-8") as f:
-    leagues = json.load(f)
+# ---------- Conexión a MongoDB ----------
+mongo_client     = MongoClient(MONGO_DSN)
+mongo_db         = mongo_client["quiniela"]
+ligas_col        = mongo_db["ligas"]
+partidos_col     = mongo_db["partidos"]
+ligas_config_col = mongo_db["ligas_config"]
+
+# ---------- Leer configuración de ligas desde MongoDB ----------
+leagues = list(ligas_config_col.find({}, {"_id": 0}))
+if not leagues:
+    raise ValueError("No se encontraron ligas en la colección 'ligas_config' de MongoDB.")
 
 print(f"Procesando {len(leagues)} liga(s)...")
 
@@ -149,14 +152,14 @@ def convert_league(league: dict) -> None:
         "response": response,
     }
 
-    # ---------- Guardar fixtures ----------
-    os.makedirs(FIXTURES_PATH, exist_ok=True)
-    out_file = os.path.join(FIXTURES_PATH, f"{league_id}-{season}.json")
+    # ---------- Guardar fixtures en MongoDB ----------
+    partidos_col.replace_one(
+        {"parameters.league": str(league_id), "parameters.season": str(season)},
+        output,
+        upsert=True,
+    )
 
-    with open(out_file, "w", encoding="utf-8") as f:
-        json.dump(output, f, ensure_ascii=False, indent=4)
-
-    print(f"  [{league_name}] Guardado en {out_file} ({len(response)} partidos).")
+    print(f"  [{league_name}] Guardado en MongoDB (quiniela.partidos) ({len(response)} partidos).")
 
     # Calcular fechas de inicio y fin de la temporada desde los fixtures
     dates = sorted(r["fixture"]["date"][:10] for r in response)
@@ -176,13 +179,10 @@ for league in leagues:
     meta = convert_league(league)
     leagues_meta.append(meta)
 
-# ---------- Escribir data/leagues.json (volumen compartido con PHP) ----------
-leagues_file = os.path.join(FIXTURES_PATH, "..", "leagues.json")
-leagues_file = os.path.normpath(leagues_file)
+# ---------- Actualizar catálogo de ligas en MongoDB (quiniela.ligas) ----------
+for meta in leagues_meta:
+    ligas_col.replace_one({"id": meta["id"]}, meta, upsert=True)
 
-with open(leagues_file, "w", encoding="utf-8") as f:
-    json.dump(leagues_meta, f, ensure_ascii=False, indent=4)
-
-print(f"Catálogo de ligas actualizado en {leagues_file}.")
+print("Catálogo de ligas actualizado en MongoDB (quiniela.ligas).")
 print("Listo.")
 

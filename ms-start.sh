@@ -2,9 +2,12 @@
 
 cd /var/www/html
 
+
 echo "Installing dependencies from lock file"
 
 composer install --no-dev --optimize-autoloader
+
+composer require mongodb/mongodb
 
 echo "Starting Apache"
 
