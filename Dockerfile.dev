@@ -39,6 +39,14 @@ RUN a2enmod rewrite
 # Configuración de PHP para ocultar versión
 RUN echo "expose_php=Off" > /usr/local/etc/php/conf.d/security.ini
 
+# INSTALAR DEPENDENCIAS PARA MONGODB
+RUN apt-get install -y libssl-dev pkg-config
+ 
+# INSTALAR Y HABILITAR MONGODB EXTENSION CON SSL
+RUN pecl install mongodb && docker-php-ext-enable mongodb
+
+RUN composer install --no-interaction --prefer-dist --optimize-autoloader
+
 # CONFIGURAR ARCHIVO DE INICIO
 RUN mkdir -p /utils/scripts
 COPY ./ms-start.sh /utils/scripts/ms-start.sh

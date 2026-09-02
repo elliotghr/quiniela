@@ -1,4 +1,4 @@
-version: '3.8'
+version: "3.8"
 
 services:
   ms-mongo-web:
@@ -25,10 +25,12 @@ services:
       - ms-mongo-data:/root/python/data
     env_file:
       - ./python/.env
+    depends_on:
+      - ms-mongo-db-mongo
 
   ms-mongo-db:
     image: mysql:8.3.0
-    container_name: ms-mongo-db 
+    container_name: ms-mongo-db
     restart: always
     env_file:
       - mysql-containers/development/env/.env
@@ -39,9 +41,25 @@ services:
       - ./mysql-containers/development/config:/etc/mysql/conf.d
       - ./mysql-containers/development/env:/root/env
       - ./mysql-containers/development/scripts:/root/scripts
+    depends_on:
+      - ms-mongo-db-mongo
+
+  ms-mongo-db-mongo:
+    image: mongo:8.3
+    container_name: ms-mongo-db-mongo
+    ports:
+      - "27018:27017"
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    volumes:
+      - datos_mongo:/data/db
 
 volumes:
   ms-mongo-db-vol:
     name: ms-mongo-db-vol
   ms-mongo-data:
     name: ms-mongo-data
+  datos_mongo:
+    name: datos_mongo

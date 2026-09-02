@@ -11,16 +11,16 @@ use DateTime;
 class MisQuinielasController extends BaseController
 {
     function __construct()
-	{
+    {
         $this->quinielasModel = new QuinielasModel();
         $this->leaguesModel = new LeaguesModel();
         $this->userModel = new UserModel();
-	}
+    }
 
     public function index()
     {
         $session = service('session');
-        
+
         /* GENERALES */
         $data['title'] = 'Mis Quinielas';
         $data['HTMLModules'] = ['bootstrap', 'jquery', 'js', 'globalCSS', 'fontawesome', 'logout', 'validate', 'modal'];
@@ -138,8 +138,7 @@ class MisQuinielasController extends BaseController
         $participantesArray = $participantes->getResultArray();
         $partidosArray = $partidos->getResultArray();
 
-        foreach($participantesArray as $participante)
-        {
+        foreach ($participantesArray as $participante) {
             $result = array();
             $result['usuario_avatar'] = $participante['usuario_avatar'];
             $result['usuario_nombre'] = $participante['usuario_nombre'];
@@ -148,34 +147,23 @@ class MisQuinielasController extends BaseController
             $result['pronostico_consecutivo'] = $participante['pronostico_consecutivo'];
             $result['puntos'] = 0;
 
-            foreach ($fixtures as $fixture)
-            {
-                foreach ($partidosArray as $partido)
-                {
-                    if($participante['usuario_id'] == $partido['usuario_id'] && $participante['pronostico_consecutivo'] == $partido['pronostico_consecutivo'] )
-                    {
-                        if($fixture['id'] == $partido['partido_partido'])
-                        {
+            foreach ($fixtures as $fixture) {
+                foreach ($partidosArray as $partido) {
+                    if ($participante['usuario_id'] == $partido['usuario_id'] && $participante['pronostico_consecutivo'] == $partido['pronostico_consecutivo']) {
+                        if ($fixture['id'] == $partido['partido_partido']) {
                             $result['partido_pronostico_local'] = $partido['partido_pronostico_local'];
                             $result['partido_pronostico_visitante'] = $partido['partido_pronostico_visitante'];
 
-                            if(($partido['partido_pronostico_local'] !== null && $partido['partido_pronostico_visitante'] !== null)
-                                && ($fixture['home_goals'] !== null && $fixture['away_goals'] !== null))
-                            {
-                                if($fixture['home_goals'] == $partido['partido_pronostico_local'] && $fixture['away_goals'] == $partido['partido_pronostico_visitante'])
-                                {
+                            if (($partido['partido_pronostico_local'] !== null && $partido['partido_pronostico_visitante'] !== null)
+                                && ($fixture['home_goals'] !== null && $fixture['away_goals'] !== null)
+                            ) {
+                                if ($fixture['home_goals'] == $partido['partido_pronostico_local'] && $fixture['away_goals'] == $partido['partido_pronostico_visitante']) {
                                     $result['puntos'] += 3;
-                                }
-                                elseif($fixture['home_goals'] == $fixture['away_goals'] && $partido['partido_pronostico_local'] == $partido['partido_pronostico_visitante'])
-                                {
+                                } elseif ($fixture['home_goals'] == $fixture['away_goals'] && $partido['partido_pronostico_local'] == $partido['partido_pronostico_visitante']) {
                                     $result['puntos'] += 1;
-                                }
-                                elseif($fixture['home_goals'] > $fixture['away_goals'] && $partido['partido_pronostico_local'] > $partido['partido_pronostico_visitante'])
-                                {
+                                } elseif ($fixture['home_goals'] > $fixture['away_goals'] && $partido['partido_pronostico_local'] > $partido['partido_pronostico_visitante']) {
                                     $result['puntos'] += 1;
-                                }
-                                elseif($fixture['home_goals'] < $fixture['away_goals'] && $partido['partido_pronostico_local'] < $partido['partido_pronostico_visitante'])
-                                {
+                                } elseif ($fixture['home_goals'] < $fixture['away_goals'] && $partido['partido_pronostico_local'] < $partido['partido_pronostico_visitante']) {
                                     $result['puntos'] += 1;
                                 }
                             }
@@ -220,8 +208,7 @@ class MisQuinielasController extends BaseController
 
         $fixtures = array();
 
-        foreach($partidos as $key => $partido)
-        {
+        foreach ($partidos as $key => $partido) {
             $fixture = array();
             $fixture['id'] = util_decode($key);
             $fixture['pronostico_id'] = $pronosticoId;
@@ -246,10 +233,9 @@ class MisQuinielasController extends BaseController
         $pronostico['id'] = $this->request->getPost('pid') !== null ? trim(util_decode($this->request->getPost('pid'))) : 0;
         $pronosticos = $this->request->getPost('pronostico') !== null ? $this->request->getPost('pronostico') : array();
         $pronostico['quiniela_id'] = $this->request->getPost('quinielaId') !== null ? trim(util_decode($this->request->getPost('quinielaId'))) : 0;
-        
+
         $on = array();
-        foreach($pronosticos as $key => $val)
-        {
+        foreach ($pronosticos as $key => $val) {
             $on[] = util_decode($key);
         }
 
@@ -275,7 +261,7 @@ class MisQuinielasController extends BaseController
 
         $quinielaRow = $data['quiniela']->getRowArray();
         $data['subTitle'] = 'Quiniela: ' . $quinielaRow['quiniela_nombre'];
-        
+
         $data['mainTable'] = view('Quinielas/MisQuinielas/quiniela', $data);
         $data['dataTable'] = view('Quinielas/MisQuinielas/dataTable', $data);
 
@@ -287,8 +273,7 @@ class MisQuinielasController extends BaseController
         $data['status'] = "OK";
         $data['message'] = "Todo bien";
 
-        try
-        {
+        try {
             $search['usuario_id'] = getUserSession();
             $search['quiniela_id'] = $this->request->getPost('quinielaId') !== null ? trim(util_decode($this->request->getPost('quinielaId'))) : 0;
             $search['pronostico_id'] = $this->request->getPost('pronosticoId') !== null ? trim(util_decode($this->request->getPost('pronosticoId'))) : 0;
@@ -321,13 +306,11 @@ class MisQuinielasController extends BaseController
             $fixtureIds         = array_column(array_values($data['fixtures']), 'id');
             $missingFixtureIds  = array_diff($fixtureIds, $existingFixtureIds);
 
-            if(!empty($missingFixtureIds))
-            {
+            if (!empty($missingFixtureIds)) {
                 log_message('debug', '[getPartidos] missing partidos, inserting count={0}', [count($missingFixtureIds)]);
 
                 $partidos = [];
-                foreach($missingFixtureIds as $fixtureId)
-                {
+                foreach ($missingFixtureIds as $fixtureId) {
                     $partido = [];
                     $partido["pronostico_id"] = $search['pronostico_id'];
                     $partido["partido"] = $fixtureId;
@@ -345,9 +328,7 @@ class MisQuinielasController extends BaseController
             log_message('debug', '[getPartidos] fixture IDs={0}', [json_encode($fixtureIds)]);
 
             $data['dataTable'] = view('Quinielas/MisQuinielas/partidos', $data);
-        }
-        catch (\Throwable $e)
-        {
+        } catch (\Throwable $e) {
             log_message('error', '[getPartidos] EXCEPTION: {0} in {1}:{2}', [$e->getMessage(), $e->getFile(), $e->getLine()]);
             $data['status']  = 'ERROR';
             $data['message'] = 'Error interno: ' . $e->getMessage();
@@ -367,8 +348,7 @@ class MisQuinielasController extends BaseController
         $rondas       = $this->request->getPost('rondas') !== null ? trim($this->request->getPost('rondas')) : '';
         $maxPronosticos = $this->request->getPost('maxPronosticos') !== null ? (int) trim($this->request->getPost('maxPronosticos')) : 1;
 
-        if (!$liga || !$temporada || !$nombre || !$fechaInicio || !$rondas)
-        {
+        if (!$liga || !$temporada || !$nombre || !$fechaInicio || !$rondas) {
             $data['status'] = 'ERROR';
             $data['message'] = 'Todos los campos son obligatorios';
             return json_encode($data);
@@ -410,8 +390,7 @@ class MisQuinielasController extends BaseController
         $result = $this->quinielasModel->getQuinielaById(['quiniela_id' => $quinielaId]);
         $row    = $result->getRowArray();
 
-        if (!$row || $row['quiniela_usuario_id'] != getUserSession())
-        {
+        if (!$row || $row['quiniela_usuario_id'] != getUserSession()) {
             $data['status']  = 'ERROR';
             $data['message'] = 'No autorizado';
             return json_encode($data);
@@ -440,8 +419,7 @@ class MisQuinielasController extends BaseController
         $rondas         = $this->request->getPost('rondas') !== null ? trim($this->request->getPost('rondas')) : '';
         $maxPronosticos = $this->request->getPost('maxPronosticos') !== null ? (int) trim($this->request->getPost('maxPronosticos')) : 1;
 
-        if (!$quinielaId || !$nombre || !$fechaInicio || !$rondas)
-        {
+        if (!$quinielaId || !$nombre || !$fechaInicio || !$rondas) {
             $data['status']  = 'ERROR';
             $data['message'] = 'Todos los campos son obligatorios';
             return json_encode($data);
@@ -468,25 +446,20 @@ class MisQuinielasController extends BaseController
 
         $quinielaId = $this->request->getPost('quinielaId') !== null ? (int) trim(util_decode($this->request->getPost('quinielaId'))) : 0;
 
-        if (!$quinielaId)
-        {
+        if (!$quinielaId) {
             $data['status']  = 'ERROR';
             $data['message'] = 'Quiniela no válida';
             return json_encode($data);
         }
 
-        try
-        {
+        try {
             $deleted = $this->quinielasModel->deleteQuiniela(['id' => $quinielaId, 'usuario_id' => getUserSession()]);
 
-            if (!$deleted)
-            {
+            if (!$deleted) {
                 $data['status']  = 'ERROR';
                 $data['message'] = 'No tienes permiso para eliminar esta quiniela';
             }
-        }
-        catch (\Throwable $e)
-        {
+        } catch (\Throwable $e) {
             $data['status']  = 'ERROR';
             $data['message'] = 'Error al eliminar: ' . $e->getMessage();
         }
@@ -498,7 +471,12 @@ class MisQuinielasController extends BaseController
     {
         $data['subTitle'] = 'Mis Quinielas';
         $data['quinielas'] = $this->quinielasModel->getQuinielas(getUserSession());
-        $data['leagues'] = $this->leaguesModel->getLeagues();
+        $getLigas = $this->leaguesModel->getLeagues();
+        // Convertir el array de ligas en un array asociativo con el ID como clave
+        $data['leagues'] = [];
+        foreach ($getLigas as $resultado) {
+            $data['leagues'][$resultado['id']] = $resultado;
+        }
         $data['mainTable'] = view('Quinielas/MisQuinielas/quinielas', $data);
         $data['formNuevaQuiniela'] = view('Quinielas/MisQuinielas/formNuevaQuiniela', $data);
         $data['dataTable'] = view('Quinielas/MisQuinielas/dataTable', $data);

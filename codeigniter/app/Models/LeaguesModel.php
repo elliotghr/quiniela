@@ -3,27 +3,17 @@
 namespace App\Models;
 
 use CodeIgniter\Model;
+use App\Libraries\MongoLib;
 
 class LeaguesModel extends Model
 {
     public function getLeagues()
     {
         /**
-         * Obtiene la lista de ligas desde el archivo JSON generado en el Convert.py y devuelve un arreglo asociativo con la información de cada liga.
+         * Obtiene la lista de ligas desde la base de datos MongoDB utilizando la librería MongoLib.
          */
-        $response = file_get_contents(WRITEPATH . "data/leagues.json");
-        $items = json_decode($response, true);
-
-        $leagues = [];
-        foreach ($items as $item) {
-            $id = $item["id"];
-            $leagues[$id]["name"]  = $item["name"];
-            $leagues[$id]["logo"]  = $item["logo"];
-            $leagues[$id]["start"] = $item["start"];
-            $leagues[$id]["end"]   = $item["end"];
-        }
-
-        return $leagues;
+        $mongoLib = new MongoLib("quiniela", "ligas");
+        return $mongoLib->getEntryList();
     }
 
     public function getQuinielaLeagues()
