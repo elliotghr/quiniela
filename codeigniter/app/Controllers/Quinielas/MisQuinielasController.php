@@ -471,12 +471,7 @@ class MisQuinielasController extends BaseController
     {
         $data['subTitle'] = 'Mis Quinielas';
         $data['quinielas'] = $this->quinielasModel->getQuinielas(getUserSession());
-        $getLigas = $this->leaguesModel->getLeagues();
-        // Convertir el array de ligas en un array asociativo con el ID como clave
-        $data['leagues'] = [];
-        foreach ($getLigas as $resultado) {
-            $data['leagues'][$resultado['id']] = $resultado;
-        }
+        $data['leagues'] = $this->leaguesModel->getLeagues();
         $data['mainTable'] = view('Quinielas/MisQuinielas/quinielas', $data);
         $data['formNuevaQuiniela'] = view('Quinielas/MisQuinielas/formNuevaQuiniela', $data);
         $data['dataTable'] = view('Quinielas/MisQuinielas/dataTable', $data);

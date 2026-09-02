@@ -13,7 +13,14 @@ class LeaguesModel extends Model
          * Obtiene la lista de ligas desde la base de datos MongoDB utilizando la librería MongoLib.
          */
         $mongoLib = new MongoLib("quiniela", "ligas");
-        return $mongoLib->getEntryList();
+        $getLigas = $mongoLib->getEntryList();
+
+        // Convertir el array de ligas en un array asociativo con el ID como clave
+        $data['leagues'] = [];
+        foreach ($getLigas as $resultado) {
+            $data['leagues'][$resultado['id']] = $resultado;
+        }
+        return $data['leagues'];
     }
 
     public function getQuinielaLeagues()
@@ -49,8 +56,15 @@ class LeaguesModel extends Model
     {
         $fixtures = [];
         foreach ($leagues['ids'] as $league) {
-            $response = file_get_contents(WRITEPATH . "data/fixtures/{$league["liga"]}-{$league['temporada']}.json");
-            $data = json_decode($response, true);
+            $mongoLib = new MongoLib("quiniela", "partidos");
+
+            $resultado = $mongoLib->getEntry([
+                "parameters.league" => $league['liga'],
+                "parameters.season" => $league['temporada']
+            ]);
+
+            // BSONDocument (u otros objetos) se normaliza a array asociativo.
+            $data = json_decode(json_encode($resultado), true);
 
             foreach ($data["response"] as $fixture) {
                 if ($fixture["league"]["id"] == $league['liga'] && $fixture["league"]["season"] == $league['temporada']) {
