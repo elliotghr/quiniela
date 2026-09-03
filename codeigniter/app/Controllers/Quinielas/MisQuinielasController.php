@@ -355,7 +355,7 @@ class MisQuinielasController extends BaseController
         $rondas       = $this->request->getPost('rondas') !== null ? trim($this->request->getPost('rondas')) : '';
         $maxPronosticos = $this->request->getPost('maxPronosticos') !== null ? (int) trim($this->request->getPost('maxPronosticos')) : 1;
 
-        if (!$liga || !$temporada || !$nombre || !$fechaInicio || !$rondas) {
+        if (!$liga || !$temporada || !$nombre || !$fechaInicio) {
             $data['status'] = 'ERROR';
             $data['message'] = 'Todos los campos son obligatorios';
             return json_encode($data);
@@ -426,7 +426,7 @@ class MisQuinielasController extends BaseController
         $rondas         = $this->request->getPost('rondas') !== null ? trim($this->request->getPost('rondas')) : '';
         $maxPronosticos = $this->request->getPost('maxPronosticos') !== null ? (int) trim($this->request->getPost('maxPronosticos')) : 1;
 
-        if (!$quinielaId || !$nombre || !$fechaInicio || !$rondas) {
+        if (!$quinielaId || !$nombre || !$fechaInicio) {
             $data['status']  = 'ERROR';
             $data['message'] = 'Todos los campos son obligatorios';
             return json_encode($data);

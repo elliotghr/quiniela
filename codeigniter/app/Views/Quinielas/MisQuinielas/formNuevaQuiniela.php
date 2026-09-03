@@ -30,14 +30,6 @@
         <label for="fechaInicio">Fecha límite de captura</label>
     </div>
 
-    <div class="mb-3">
-        <label for="rondas" class="form-label text-secondary">
-            Rondas <small class="text-muted">(separadas por |)</small>
-        </label>
-        <input id="rondas" name="rondas" type="text" class="form-control modal-text" placeholder="Regular Season - 1|Group Stage - 2|Group Stage - 3" data-validate="required" data-validate-label="Rondas">
-        <div class="form-text">Ejemplo: <code>Regular Season - 1|Group Stage - 2|Round of 16</code></div>
-    </div>
-
     <div class="form-floating mb-4">
         <input id="maxPronosticos" name="maxPronosticos" type="number" class="form-control modal-text" placeholder="" min="1" max="10" value="1" data-validate="required number" data-validate-label="Máximo de pronósticos">
         <label for="maxPronosticos">Máximo de pronósticos por participante</label>
