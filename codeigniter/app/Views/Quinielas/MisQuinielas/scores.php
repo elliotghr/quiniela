@@ -1,3 +1,5 @@
+<link rel="stylesheet" href="/css/table.css">
+
 <?php if (isset($marcador)): ?>
     <?= $marcador ?>
 <?php endif; ?>
@@ -5,15 +7,13 @@
 <table class="table table-striped mb-5 fs-6">
     <thead>
         <tr>
-            <?php if (!$inTime): ?>
-                <th class="col text-center" scope="col"></th>
-            <?php endif; ?>
+            <th class="col text-center" scope="col"></th>
             <th class="col text-center d-none d-lg-block" scope="col">&nbsp;</th>
             <th class="col text-center" scope="col">Nombre</th>
             <?php if (isset($marcador)): ?>
                 <th class="col text-center" scope="col">Marcador</th>
             <?php endif; ?>
-            <th class="col text-center" scope="col">Puntos</th>
+            <th class="col text-center" colspan="2" scope="col">Puntos</th>
         </tr>
     </thead>
     <tbody>
@@ -56,7 +56,7 @@
                     </td>
                 <?php endif; ?>
 
-                <td class="align-middle text-center">
+                <td class="align-middle text-center" colspan="2">
                     <?= $participante['puntos'] ?>
                 </td>
             </tr>

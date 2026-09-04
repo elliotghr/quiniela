@@ -1,5 +1,6 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-bs-theme="dark">
+<!-- <html lang="en"> -->
     <head>
         <!-- Required meta tags -->
         <meta charset="utf-8">
@@ -28,6 +29,7 @@
 
         <?php if(in_array('globalCSS', $HTMLModules)): ?>
             <link rel="stylesheet" href="/css/custom-bootstrap.css">
+            <link rel="stylesheet" href="/css/root.css">
         <?php endif; ?>
 
     </head>

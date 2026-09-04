@@ -42,6 +42,9 @@ def convert_league(league: dict) -> None:
     league_name      = league["league_name"]
     league_country   = league["league_country"]
     league_logo      = league["league_logo"]
+    league_logo_dark      = league["league_logo"].split("leaguelogo/")
+    league_logo_dark.insert(1, "dark/")
+    league_logo_dark = "".join(league_logo_dark)
     league_flag      = league["league_flag"]
     season           = league["year"]
 
@@ -166,7 +169,8 @@ def convert_league(league: dict) -> None:
     return {
         "id":    league_id,
         "name":  league_name,
-        "logo":  league_logo,
+        "logo_light":  league_logo,
+        "logo_dark":   league_logo_dark,
         "flag":  league_flag,
         "start": dates[0]  if dates else None,
         "end":   dates[-1] if dates else None,

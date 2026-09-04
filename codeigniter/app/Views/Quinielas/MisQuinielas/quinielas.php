@@ -8,14 +8,13 @@
                 <th class="col" scope="col">Jornada</th>
                 <th class="col" scope="col">Inicio</th>
                 <th class="col" scope="col">Fin</th>
-                <th class="col" scope="col">Fecha limite de captura</th>
                 <th class="col" scope="col"></th>
             </tr>
         </thead>
         <tbody style="cursor: pointer;">
             <?php foreach ($quinielas->getResultArray() as $rowQuiniela): ?>
                 <tr data-action="viewQuiniela" data-id="<?= $rowQuiniela['quiniela_id'] ?>">
-                    <td class="align-middle p-3"><img src="<?= $leagues[$rowQuiniela["liga"]]["logo"] ?>" class="card-img-top" style="max-width: 75px; max-height: 75px;"></td>
+                    <td class="align-middle"><img src="<?= $leagues[$rowQuiniela["liga"]]["logo"] ?>" class="card-img-top" style="max-width: 75px; max-height: 75px;"></td>
                     <td class="align-middle"><?= $leagues[$rowQuiniela["liga"]]["name"] ?></td>
                     <td class="align-middle"><?= $rowQuiniela['temporada'] ?></td>
                     <td class="align-middle"><?= date_format(date_create($leagues[$rowQuiniela["liga"]]["start"]), "d/M") ?></td>

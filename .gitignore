@@ -3,7 +3,6 @@
 my-custom.cnf
 *.mwb.bak
 
-codeigniter/public/css/*.css
 codeigniter/public/css/*.css.map
 node_modules/
 

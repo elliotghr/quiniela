@@ -1,0 +1,7 @@
+:root{
+    --bs-bg-color: #2C3034;
+}
+
+.bg-white {
+    background-color: var(--bs-bg-color) !important;
+}
