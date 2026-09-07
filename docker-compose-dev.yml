@@ -47,12 +47,14 @@ services:
   ms-mongo-db-mongo:
     image: mongo:8.3
     container_name: ms-mongo-db-mongo
+    env_file:
+      - ./mongo/.env
     ports:
       - "27018:27017"
     restart: always
     environment:
-      MONGO_INITDB_ROOT_USERNAME: root
-      MONGO_INITDB_ROOT_PASSWORD: example
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
     volumes:
       - datos_mongo:/data/db
 
