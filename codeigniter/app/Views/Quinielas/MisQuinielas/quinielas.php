@@ -14,7 +14,7 @@
         <tbody style="cursor: pointer;">
             <?php foreach ($quinielas->getResultArray() as $rowQuiniela): ?>
                 <tr data-action="viewQuiniela" data-id="<?= $rowQuiniela['quiniela_id'] ?>">
-                    <td class="align-middle"><img src="<?= $leagues[$rowQuiniela["liga"]]["logo"] ?>" class="card-img-top" style="max-width: 75px; max-height: 75px;"></td>
+                    <td class="align-middle"><img src="<?= $leagues[$rowQuiniela["liga"]]["logo_dark"] ?>" class="card-img-top" style="max-width: 75px; max-height: 75px;"></td>
                     <td class="align-middle"><?= $leagues[$rowQuiniela["liga"]]["name"] ?></td>
                     <td class="align-middle"><?= $rowQuiniela['temporada'] ?></td>
                     <td class="align-middle"><?= date_format(date_create($leagues[$rowQuiniela["liga"]]["start"]), "d/M") ?></td>
@@ -43,7 +43,7 @@
                 <div class="accordion-body">
                     <div class="d-flex justify-content-between align-items-center mb-1 gap-3">
                         <div class="d-flex justify-content-start align-items-center gap-2">
-                            <img src="<?= $leagues[$rowQuiniela["liga"]]["logo"] ?>" class="card-img-top" style="max-width: 80px; max-height: 80px;">
+                            <img src="<?= $leagues[$rowQuiniela["liga"]]["logo_dark"] ?>" class="card-img-top" style="max-width: 80px; max-height: 80px;">
                         </div>
                         <div class="d-flex flex-column justify-content-start align-items-start mb-1 gap-1">
                             <p class="mb-0"><strong>Inicio:</strong> <?= date_format(date_create($leagues[$rowQuiniela["liga"]]["start"]), "d-M-Y") ?></p>
