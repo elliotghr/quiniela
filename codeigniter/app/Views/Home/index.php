@@ -1,9 +1,20 @@
 <?php $userRow = $user->getRowArray(); ?>
 <?php $mostrar = env('quiniela.home.mostrar'); ?>
+
+<style>
+    input[type=number]::-webkit-inner-spin-button, 
+    input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0;}
+    input[type=number] {-moz-appearance: textfield;}
+
+    .div_score {height: 150px;}
+    .logo_team {max-width: 50px !important; max-height: 50px !important;}
+    .score_input{width: 50px; height: 50px;}
+</style>
+
 <div class="container">
     <form id="formData" method="post" action="#">
         <div class="row">
-            <div class="col-lg-6 col-12">
+            <div class="col-lg-7 col-12">
                 <div class="shadow bg-white p-4 mb-4 rounded-3">
                     <div class="row text-secondary">
                         <div class="col-10">
@@ -25,53 +36,42 @@
                     <?php $stopPrev = false; ?>
                     <div class="table-container" style="max-height: 500px; overflow-y: auto;">
                         <table class="table table-striped mt-3">
-                            <thead>
-                                <tr>
-                                    <th class="col text-center" scope="col" style="width: 35%;">Local</th>
-                                    <th class="col text-center" scope="col" style="width: 30%;">Horario</th>
-                                    <th class="col text-center" scope="col" style="width: 35%;">Visitante</th>
-                                </tr>
-                            </thead>
                             <tbody>
                                 <?php foreach ($fixtures as $fixture): ?>
                                     <?php if ($fixture['date'] >= date('c') && $next < $mostrar): ?>
                                         <tr>
-                                            <td class="align-middle text-center">
-                                                <table style="width: 100%;">
-                                                    <tr>
-                                                        <td style="width: 50%;">
-                                                            <img src="<?= $fixture["home_logo"] ?>" class="card-img-top" style="max-width: 50px; max-height: 50px;">
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>
+                                            <td>
+                                                <div class="d-flex align-middle text-center mb-2 mt-2">
+
+                                                    <div class="col-4 text-center d-flex flex-column gap-2 justify-content-between">
+                                                        <div>
+                                                            <img src="<?= $fixture["home_logo"] ?>" class="card-img-top logo_team">
+                                                        </div>
+                                                        <div>
                                                             <?= $fixture["home_name"] ?>
-                                                        </td>
-                                                    </tr>
-                                                </table>
-                                            </td>
-                                            <td class="align-middle text-center">
-                                                <?php if (is_null($fixture["home_goals"]) || is_null($fixture["away_goals"])): ?>
-                                                    <?= date_format(new DateTime($fixture["date"]), "d-M-Y"); ?>
-                                                    <br />
-                                                    <?= date_format(new DateTime($fixture["date"]), "H:i"); ?>
-                                                <?php else: ?>
-                                                    <?= $fixture["home_goals"] ?> - <?= $fixture["away_goals"] ?>
-                                                <?php endif; ?>
-                                            </td>
-                                            <td class="align-middle text-center">
-                                                <table style="width: 100%;">
-                                                    <tr>
-                                                        <td style="width: 50%;">
-                                                            <img src="<?= $fixture["away_logo"] ?>" class="card-img-top" style="max-width: 50px; max-height: 50px;">
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>
+                                                        </div>
+                                                        <div class="align-self-bottom">
+                                                            <input type="number" name="" id="" class="score_input">
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-4 text-center d-flex flex-column gap-2 justify-content-between align-self-center">
+                                                        <?= date_format(new DateTime($fixture["date"]), "d-M-Y"); ?>
+                                                        <br />
+                                                        <?= date_format(new DateTime($fixture["date"]), "H:i"); ?>
+                                                    </div>
+                                                    <div class="col-4 text-center d-flex flex-column gap-2 justify-content-between">
+                                                        <div>
+                                                            <img src="<?= $fixture["away_logo"] ?>" class="card-img-top logo_team">
+                                                        </div>
+                                                        <div>
                                                             <?= $fixture["away_name"] ?>
-                                                        </td>
-                                                    </tr>
-                                                </table>
+                                                        </div>
+                                                        <div class="align-self-bottom">
+                                                            <input type="number" name="" id="" class="score_input">
+                                                        </div>
+                                                    </div>
+
+                                                </div>
                                             </td>
                                         </tr>
                                         <?php $next++; ?>
@@ -88,7 +88,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-lg-6 col-12">
+            <div class="col-lg-5 col-12">
                 <div class="shadow bg-white p-4 mb-4 rounded-3">
                     <div class="row text-secondary">
                         <div class="col-10">
