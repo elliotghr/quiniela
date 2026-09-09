@@ -26,15 +26,24 @@ class HomeController extends BaseController
         $data['menuResult'] = $session->get('menu');
 
         $data['user'] = $this->userModel->getUserData();
-        $league['ids'] = $this->leaguesModel->getQuinielaLeagues();
-        $league['season'] = env('quiniela.season');
-        $league['rounds'] = explode('|', 'Group Stage - 1|Group Stage - 2|Group Stage - 3');
-        $data['fixtures'] = $this->leaguesModel->getMultipleFixtures($league);
-        $data['fixtures'] = util_arraySort($data['fixtures'], 'date', SORT_ASC);
+        $data['upcomingFixtures'] = $this->getUpcomingFixtures();
 
         echo view('Templates/header', $data);
         echo view('Templates/menu', $data);
         echo view('Home/index', $data);
         echo view('Templates/footer', $data);
+    }
+
+    function getUpcomingFixtures()
+    {
+        $data['mostrar'] = env('quiniela.home.mostrar');
+
+        $league['ids'] = $this->leaguesModel->getQuinielaLeagues();
+
+        $filtersFixtures['date'] = "";
+        $data['fixtures'] = $this->leaguesModel->getBdUpcomingFixtures($league);
+        $data['fixtures'] = util_arraySort($data['fixtures'], 'date', SORT_ASC);
+
+        return view('Matches/matchesList', $data);;
     }
 }

@@ -1,15 +1,4 @@
 <?php $userRow = $user->getRowArray(); ?>
-<?php $mostrar = env('quiniela.home.mostrar'); ?>
-
-<style>
-    input[type=number]::-webkit-inner-spin-button, 
-    input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0;}
-    input[type=number] {-moz-appearance: textfield;}
-
-    .div_score {height: 150px;}
-    .logo_team {max-width: 50px !important; max-height: 50px !important;}
-    .score_input{width: 50px; height: 50px;}
-</style>
 
 <div class="container">
     <form id="formData" method="post" action="#">
@@ -30,64 +19,14 @@
                     </div>
 
                     <hr />
-
-                    <?php $next = 0; ?>
-                    <?php $prev = 0; ?>
-                    <?php $stopPrev = false; ?>
+                    
                     <div class="table-container" style="max-height: 500px; overflow-y: auto;">
-                        <table class="table table-striped mt-3">
-                            <tbody>
-                                <?php foreach ($fixtures as $fixture): ?>
-                                    <?php if ($fixture['date'] >= date('c') && $next < $mostrar): ?>
-                                        <tr>
-                                            <td>
-                                                <div class="d-flex align-middle text-center mb-2 mt-2">
-
-                                                    <div class="col-4 text-center d-flex flex-column gap-2 justify-content-between">
-                                                        <div>
-                                                            <img src="<?= $fixture["home_logo"] ?>" class="card-img-top logo_team">
-                                                        </div>
-                                                        <div>
-                                                            <?= $fixture["home_name"] ?>
-                                                        </div>
-                                                        <div class="align-self-bottom">
-                                                            <input type="number" name="" id="" class="score_input">
-                                                        </div>
-                                                    </div>
-                                                    <div class="col-4 text-center d-flex flex-column gap-2 justify-content-between align-self-center">
-                                                        <?= date_format(new DateTime($fixture["date"]), "d-M-Y"); ?>
-                                                        <br />
-                                                        <?= date_format(new DateTime($fixture["date"]), "H:i"); ?>
-                                                    </div>
-                                                    <div class="col-4 text-center d-flex flex-column gap-2 justify-content-between">
-                                                        <div>
-                                                            <img src="<?= $fixture["away_logo"] ?>" class="card-img-top logo_team">
-                                                        </div>
-                                                        <div>
-                                                            <?= $fixture["away_name"] ?>
-                                                        </div>
-                                                        <div class="align-self-bottom">
-                                                            <input type="number" name="" id="" class="score_input">
-                                                        </div>
-                                                    </div>
-
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        <?php $next++; ?>
-                                        <?php $stopPrev = true; ?>
-                                    <?php elseif (!$stopPrev): ?>
-                                        <?php $prev++; ?>
-                                    <?php endif; ?>
-                                <?php endforeach; ?>
-                                <?php if ($next === 0): ?>
-                                    No hay eventos que mostrar
-                                <?php endif; ?>
-                            </tbody>
-                        </table>
+                        <?= $upcomingFixtures; ?>
                     </div>
                 </div>
             </div>
+
+
             <div class="col-lg-5 col-12">
                 <div class="shadow bg-white p-4 mb-4 rounded-3">
                     <div class="row text-secondary">
@@ -104,6 +43,9 @@
                     </div>
 
                     <hr />
+                    <?php $next = 0; ?>
+                    <?php $prev = 0; ?>
+                    <?php $stopPrev = false; ?>
 
                     <?php if ($prev === 0): ?>
                         No hay marcadores que mostrar

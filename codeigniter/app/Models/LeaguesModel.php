@@ -58,21 +58,44 @@ class LeaguesModel extends Model
 
         return $fixtures;
     }
-    public function getMultipleFixtures(array $leagues)
+    public function getBdUpcomingFixtures(array $leagues)
     {
         $fixtures = [];
-        foreach ($leagues['ids'] as $league) {
+        foreach ($leagues['ids'] as $league) 
+        {
             $mongoLib = new MongoLib("quiniela", "partidos");
 
-            $resultado = $mongoLib->getEntry([
-                "parameters.league" => $league['liga'],
-                "parameters.season" => $league['temporada']
-            ]);
+            $timestampActual = time();
+            $timestampUpcomingLimit = $timestampActual + (8 * 24 * 60 * 60);
 
-            // BSONDocument (u otros objetos) se normaliza a array asociativo.
-            $data = json_decode(json_encode($resultado), true);
+            $pipeline = [
+                [
+                    '$match' => [
+                        'parameters.league' => $league['liga'],
+                        'parameters.season' => $league['temporada']
+                    ]
+                ],
+                [
+                    '$unwind' => '$response'
+                ],
+                [
+                    '$match' => [
+                        'response.fixture.timestamp' => [
+                            '$gte' => $timestampActual,
+                            '$lte' => $timestampUpcomingLimit
+                        ]
+                    ]
+                ],
+                [
+                    '$replaceRoot' => [
+                        'newRoot' => '$response'
+                    ]
+                ]
+            ];
 
-            foreach ($data["response"] as $fixture) {
+            $resultado = $mongoLib->aggregate($pipeline);
+
+            foreach ($resultado as $fixture) {
                 if ($fixture["league"]["id"] == $league['liga'] && $fixture["league"]["season"] == $league['temporada']) {
                     $fixtures[$fixture["fixture"]["id"]]["id"] = $fixture["fixture"]["id"];
                     $fixtures[$fixture["fixture"]["id"]]["date"] = $fixture["fixture"]["date"];
