@@ -210,12 +210,15 @@ class MisQuinielasController extends BaseController
         $fixtures = array();
 
         foreach ($partidos as $key => $partido) {
+            $partidoPronostico = isset($partido['pronostico']) ? util_decode($partido['pronostico']) : $pronosticoId;
+            $partido_id_db = isset($partido['partido_id_db']) ? util_decode($partido['partido_id_db']) : null;
+
             $fixture = array();
-            $fixture['id'] = util_decode($key);
-            $fixture['pronostico_id'] = $pronosticoId;
-            $fixture['partido'] = util_decode($partido['partido']);
-            $fixture['pronostico_local'] = $partido['home'] != '' ? $partido['home'] : null;
-            $fixture['pronostico_visitante'] = $partido['away'] != '' ? $partido['away'] : null;
+            $fixture['id'] = $partido_id_db != null ? $partido_id_db : util_decode($key);
+            $fixture['pronostico_id'] = $partidoPronostico;
+            $fixture['partido'] = isset($partido['partido']) ? util_decode($partido['partido']) : null;
+            $fixture['pronostico_local'] = isset($partido['home']) && $partido['home'] != '' ? $partido['home'] : null;
+            $fixture['pronostico_visitante'] = isset($partido['away']) && $partido['away'] != '' ? $partido['away'] : null;
 
             $fixtures[] = $fixture;
         }

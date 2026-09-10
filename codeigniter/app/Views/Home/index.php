@@ -1,15 +1,16 @@
 <?php $userRow = $user->getRowArray(); ?>
 
 <div class="container">
-    <form id="formData" method="post" action="#">
+    <form id="formQuiniela" method="post" action="#">
         <div class="row">
             <div class="col-lg-7 col-12">
                 <div class="shadow bg-white p-4 mb-4 rounded-3">
                     <div class="row text-secondary">
                         <div class="col-10">
                             <h3>
-                                Próximos Eventos
+                                Próximos partidos
                             </h3>
+                            <button class="btn btn-alternative btnSave"><i class="fas fa-save"></i> Guardar</button>
                         </div>
                         <div class="col-2 text-end">
                             <h3>
