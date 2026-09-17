@@ -27,6 +27,8 @@ class HomeController extends BaseController
 
         $data['user'] = $this->userModel->getUserData();
         $data['upcomingFixtures'] = $this->getUpcomingFixtures();
+        $data['error'] = view('Templates/error');
+        $data['success'] = view('Templates/success');
 
         echo view('Templates/header', $data);
         echo view('Templates/menu', $data);

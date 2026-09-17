@@ -10,7 +10,7 @@
                             <h3>
                                 Próximos partidos
                             </h3>
-                            <button class="btn btn-alternative btnSave"><i class="fas fa-save"></i> Guardar</button>
+                            <button class="btn btn-primary btnSave"><i class="fas fa-save"></i> Guardar</button>
                         </div>
                         <div class="col-2 text-end">
                             <h3>
@@ -117,3 +117,6 @@
         </div>
     </form>
 </div>
+
+<?=$success?>
+<?=$error?>
