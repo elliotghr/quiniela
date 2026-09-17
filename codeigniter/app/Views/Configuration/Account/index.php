@@ -23,7 +23,7 @@
                         <div class="col-12">
                             <div class="avatar-150px border">
                                 <div>
-                                    <img id="imgAvatar" src="<?=os_loadImage('avatar/' . $userRow['avatar'])?>" alt="avatar" class="mx-auto d-block">
+                                    <img id="imgAvatar" src="<?=os_loadImage('avatar/' . $userRow['avatar'])?>" alt="avatar" class="mx-auto d-block" style="max-width: 100px; max-height: 100px; width: 100%">
                                 </div>
                             </div>
                         </div>

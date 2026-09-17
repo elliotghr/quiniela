@@ -15,7 +15,7 @@
                 <td>
                     <div class="avatar-50px border">
                         <div>
-                            <img id="imgAvatar" src="<?=os_loadImage('avatar/' . $rowUser['avatar'])?>" alt="avatar" class="mx-auto d-block">
+                            <img id="imgAvatar" src="<?=os_loadImage('avatar/' . $rowUser['avatar'])?>" alt="avatar" class="mx-auto d-block" style="max-width: 50px; max-height: 50px; width: 100%">
                         </div>
                     </div>
                 </td>
