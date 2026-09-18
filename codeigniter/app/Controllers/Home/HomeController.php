@@ -26,15 +26,49 @@ class HomeController extends BaseController
         $data['menuResult'] = $session->get('menu');
 
         $data['user'] = $this->userModel->getUserData();
-        $league['ids'] = $this->leaguesModel->getQuinielaLeagues();
-        $league['season'] = env('quiniela.season');
-        $league['rounds'] = explode('|', 'Group Stage - 1|Group Stage - 2|Group Stage - 3');
-        $data['fixtures'] = $this->leaguesModel->getMultipleFixtures($league);
-        $data['fixtures'] = util_arraySort($data['fixtures'], 'date', SORT_ASC);
+        $data['upcomingFixtures'] = $this->getUpcomingFixtures();
+        $data['error'] = view('Templates/error');
+        $data['success'] = view('Templates/success');
 
         echo view('Templates/header', $data);
         echo view('Templates/menu', $data);
         echo view('Home/index', $data);
         echo view('Templates/footer', $data);
+    }
+
+    function getUpcomingFixtures()
+    {
+        $league['ids'] = $this->leaguesModel->getQuinielaLeagues();
+
+        $filtersFixtures['date'] = "";
+        $fixtures = $this->leaguesModel->getBdUpcomingFixtures($league);
+        
+        $partidos_ids = array();
+        foreach ($fixtures as $keyFixture => $fixture) 
+        {
+            $fixtures[$keyFixture]['prediction_home'] = "";
+            $fixtures[$keyFixture]['prediction_away'] = "";
+            $fixtures[$keyFixture]['partido_id'] = "";
+            $fixtures[$keyFixture]['partido_id_db'] = "";
+            $fixtures[$keyFixture]['pronostico_id'] = "";
+
+            array_push($partidos_ids,$fixture['id']);
+        }
+
+        $pronostico['usuario_id'] = getUserSession();
+        $pronostico['partidos_ids'] = $partidos_ids;
+        $pronosticoPartidos = $this->quinielasModel->getPartidos($pronostico);
+        foreach ($pronosticoPartidos->getResult() as $keyPronostico => $pronostico) 
+        {
+            $fixtures[$pronostico->partido]['prediction_home'] = $pronostico->pronostico_local ;
+            $fixtures[$pronostico->partido]['prediction_away'] = $pronostico->pronostico_visitante;
+            $fixtures[$pronostico->partido]['partido_id'] = util_encode($pronostico->partido);
+            $fixtures[$pronostico->partido]['partido_id_db'] = util_encode($pronostico->partido_id);
+            $fixtures[$pronostico->partido]['pronostico_id'] = util_encode($pronostico->pronostico_id);
+        }
+
+        $data['fixtures'] = util_arraySort($fixtures, 'date', SORT_ASC);
+
+        return view('Matches/matchesList', $data);;
     }
 }

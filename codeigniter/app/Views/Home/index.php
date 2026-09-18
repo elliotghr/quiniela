@@ -1,15 +1,16 @@
 <?php $userRow = $user->getRowArray(); ?>
-<?php $mostrar = env('quiniela.home.mostrar'); ?>
+
 <div class="container">
-    <form id="formData" method="post" action="#">
+    <form id="formQuiniela" method="post" action="#">
         <div class="row">
-            <div class="col-lg-6 col-12">
-                <div class="shadow p-4 mb-4 rounded-3">
+            <div class="col-lg-7 col-12">
+                <div class="shadow bg-white p-4 mb-4 rounded-3">
                     <div class="row text-secondary">
                         <div class="col-10">
                             <h3>
-                                Próximos Eventos
+                                Próximos partidos
                             </h3>
+                            <button class="btn btn-primary btnSave"><i class="fas fa-save"></i> Guardar</button>
                         </div>
                         <div class="col-2 text-end">
                             <h3>
@@ -19,77 +20,16 @@
                     </div>
 
                     <hr />
-
-                    <?php $next = 0; ?>
-                    <?php $prev = 0; ?>
-                    <?php $stopPrev = false; ?>
+                    
                     <div class="table-container" style="max-height: 500px; overflow-y: auto;">
-                        <table class="table table-striped mt-3">
-                            <thead>
-                                <tr>
-                                    <th class="col text-center" scope="col" style="width: 35%;">Local</th>
-                                    <th class="col text-center" scope="col" style="width: 30%;">Horario</th>
-                                    <th class="col text-center" scope="col" style="width: 35%;">Visitante</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php foreach ($fixtures as $fixture): ?>
-                                    <?php if ($fixture['date'] >= date('c') && $next < $mostrar): ?>
-                                        <tr>
-                                            <td class="align-middle text-center">
-                                                <table style="width: 100%;">
-                                                    <tr>
-                                                        <td style="width: 50%;">
-                                                            <img src="<?= $fixture["home_logo"] ?>" class="card-img-top" style="max-width: 50px; max-height: 50px;">
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>
-                                                            <?= $fixture["home_name"] ?>
-                                                        </td>
-                                                    </tr>
-                                                </table>
-                                            </td>
-                                            <td class="align-middle text-center">
-                                                <?php if (is_null($fixture["home_goals"]) || is_null($fixture["away_goals"])): ?>
-                                                    <?= date_format(new DateTime($fixture["date"]), "d-M-Y"); ?>
-                                                    <br />
-                                                    <?= date_format(new DateTime($fixture["date"]), "H:i"); ?>
-                                                <?php else: ?>
-                                                    <?= $fixture["home_goals"] ?> - <?= $fixture["away_goals"] ?>
-                                                <?php endif; ?>
-                                            </td>
-                                            <td class="align-middle text-center">
-                                                <table style="width: 100%;">
-                                                    <tr>
-                                                        <td style="width: 50%;">
-                                                            <img src="<?= $fixture["away_logo"] ?>" class="card-img-top" style="max-width: 50px; max-height: 50px;">
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td>
-                                                            <?= $fixture["away_name"] ?>
-                                                        </td>
-                                                    </tr>
-                                                </table>
-                                            </td>
-                                        </tr>
-                                        <?php $next++; ?>
-                                        <?php $stopPrev = true; ?>
-                                    <?php elseif (!$stopPrev): ?>
-                                        <?php $prev++; ?>
-                                    <?php endif; ?>
-                                <?php endforeach; ?>
-                                <?php if ($next === 0): ?>
-                                    No hay eventos que mostrar
-                                <?php endif; ?>
-                            </tbody>
-                        </table>
+                        <?= $upcomingFixtures; ?>
                     </div>
                 </div>
             </div>
-            <div class="col-lg-6 col-12">
-                <div class="shadow p-4 mb-4 rounded-3">
+
+
+            <div class="col-lg-5 col-12">
+                <div class="shadow bg-white p-4 mb-4 rounded-3">
                     <div class="row text-secondary">
                         <div class="col-10">
                             <h3>
@@ -104,6 +44,9 @@
                     </div>
 
                     <hr />
+                    <?php $next = 0; ?>
+                    <?php $prev = 0; ?>
+                    <?php $stopPrev = false; ?>
 
                     <?php if ($prev === 0): ?>
                         No hay marcadores que mostrar
@@ -174,3 +117,6 @@
         </div>
     </form>
 </div>
+
+<?=$success?>
+<?=$error?>

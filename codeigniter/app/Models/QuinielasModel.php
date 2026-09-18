@@ -177,36 +177,60 @@ class QuinielasModel extends Model
         return $query;
     }
 
-    public function getPronosticos($pronosticos)
+    public function getPronosticos($filter)
     {
-        $sql = "SELECT	PCO.id AS 'pronostico_id',
+        $builder = $this->db->table('Pronostico PCO');
+        $builder->select("PCO.id AS 'pronostico_id',
                         PCO.quiniela_id AS 'quiniela_id',
                         PCO.usuario_id AS 'usuario_id',
-						PCO.consecutivo
-                FROM	Pronostico PCO
-                WHERE	PCO.quiniela_id = :quiniela_id:
-                        AND PCO.usuario_id = :usuario_id:
-                ORDER BY id ASC";
+						PCO.consecutivo");
 
-        $query = $this->db->query($sql, $pronosticos);
+        if(isset($filter['quiniela_id']))
+        {
+            $builder->where('PCO.quiniela_id', $filter['quiniela_id']);
+        }
+
+        if(isset($filter['usuario_id']))
+        {
+            $builder->where('PCO.usuario_id', $filter['usuario_id']);
+        }
+
+        $query = $builder->get();
 
         return $query;
     }
 
-    public function getPartidos($quiniela)
+    public function getPartidos($filter)
     {
-        $sql = "SELECT  P.id AS 'partido_id',
+        $builder = $this->db->table('Partido P');
+        $builder->join('Pronostico PCO', 'PCO.id = P.pronostico_id');
+        $builder->select("P.id AS 'partido_id',
                         P.partido,
                         P.pronostico_local,
-                        P.pronostico_visitante
-                FROM    Partido P
-                INNER JOIN Pronostico PCO ON
-                        PCO.id = P.pronostico_id
-                WHERE   PCO.id = :pronostico_id:
-                        AND PCO.quiniela_id = :quiniela_id:
-                        AND PCO.usuario_id = :usuario_id:";
+                        P.pronostico_visitante,
+                        PCO.id AS 'pronostico_id'");
 
-        $query = $this->db->query($sql, $quiniela);
+        if(isset($filter['pronostico_id']))
+        {
+            $builder->where('PCO.id', $filter['pronostico_id']);
+        }
+
+        if(isset($filter['quiniela_id']))
+        {
+            $builder->where('PCO.quiniela_id', $filter['quiniela_id']);
+        }
+        
+        if(isset($filter['usuario_id']))
+        {
+            $builder->where('PCO.usuario_id', $filter['usuario_id']);
+        }
+
+        if(isset($filter['partidos_ids']))
+        {
+            $builder->whereIn('P.partido', $filter['partidos_ids']);
+        }
+
+        $query = $builder->get();
 
         return $query;
     }
