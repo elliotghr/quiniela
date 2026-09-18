@@ -47,8 +47,16 @@ def convert_league(league: dict) -> None:
     league_logo_dark = "".join(league_logo_dark)
     league_flag      = league["league_flag"]
     season           = league["year"]
+    league_date_end  = league["league_date_end"]
 
     params = {"league_id": fotmob_league_id, "season": fotmob_season}
+    
+    if league_date_end:
+        # Covertir a date y compara contra la fecha actual
+        league_date_end_dt = datetime.fromisoformat(league_date_end)
+        if league_date_end_dt.date() < datetime.now().date():
+            print(f"  [{league_name}] La liga ha finalizado. No se procesarán más partidos.")
+            return
 
     print(f"  [{league_name}] Consultando liga {fotmob_league_id}, temporada {fotmob_season}...")
     res = requests.get(url, headers=headers, params=params, timeout=30)
@@ -181,6 +189,8 @@ def convert_league(league: dict) -> None:
 leagues_meta = []
 for league in leagues:
     meta = convert_league(league)
+    if not meta:
+        continue
     leagues_meta.append(meta)
 
 # ---------- Actualizar catálogo de ligas en MongoDB (quiniela.ligas) ----------
