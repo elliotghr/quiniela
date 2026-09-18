@@ -4,7 +4,7 @@
     <form id="formQuiniela" method="post" action="#">
         <div class="row">
             <div class="col-lg-7 col-12">
-                <div class="shadow bg-white p-4 mb-4 rounded-3">
+                <div class="shadow  p-4 mb-4 rounded-3">
                     <div class="row text-secondary">
                         <div class="col-10">
                             <h3>
@@ -29,7 +29,7 @@
 
 
             <div class="col-lg-5 col-12">
-                <div class="shadow bg-white p-4 mb-4 rounded-3">
+                <div class="shadow  p-4 mb-4 rounded-3">
                     <div class="row text-secondary">
                         <div class="col-10">
                             <h3>
