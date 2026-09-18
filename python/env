@@ -1,7 +1,7 @@
 PROJECT_PATH=/root/python
-LEAGUES_CONFIG=$PROJECT_PATH/leagues.json
 
 RAPIDAPI_KEY=
+FOTMOB_FIXTURES_URL=https://fotmob4.p.rapidapi.com/api/fotmob/v1/league/details/fixtures
 
 # MongoDB
 MONGO_DSN=mongodb://root:root@100.100.100.100:27018/?authMechanism=SCRAM-SHA-1
