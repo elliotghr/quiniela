@@ -1,4 +1,4 @@
-<div class="shadow bg-white p-4 mb-4 rounded-3">
+<div class="shadow p-4 mb-4 rounded-3">
     <div class="row text-secondary">
         <div class="col-10">
             <h3>

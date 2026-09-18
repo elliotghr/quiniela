@@ -1,4 +1,4 @@
-<div class="shadow bg-white p-4 mb-4 mt-4 rounded-3">
+<div class="shadow  p-4 mb-4 mt-4 rounded-3">
     <div class="form-floating mb-3 text-center">
         <?php if(env("theme.logo") === true): ?>
             <img src="/assets/logo.png" class="m-auto" style="max-width: 200px; max-height: 200px;">

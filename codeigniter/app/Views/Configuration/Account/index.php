@@ -2,7 +2,7 @@
     <div class="row justify-content-center">
         <div class="col-sm-12 col-lg-6">
             <form id="formAvatar" method="post" action ="#" enctype="multipart/form-data">
-                <div class="shadow bg-white p-4 mb-4 rounded-3">
+                <div class="shadow  p-4 mb-4 rounded-3">
                     <div class="row text-secondary">
                         <div class="col-10">
                             <h3>
@@ -52,7 +52,7 @@
                 </div>
             </form>
             <form id="formData" method="post" action ="#">
-                <div class="shadow bg-white p-4 mb-4 rounded-3">
+                <div class="shadow  p-4 mb-4 rounded-3">
 
                     <div class="row text-secondary">
                         <div class="col-10">

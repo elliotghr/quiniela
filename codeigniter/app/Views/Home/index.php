@@ -4,7 +4,7 @@
     <form id="formData" method="post" action="#">
         <div class="row">
             <div class="col-lg-6 col-12">
-                <div class="shadow bg-white p-4 mb-4 rounded-3">
+                <div class="shadow p-4 mb-4 rounded-3">
                     <div class="row text-secondary">
                         <div class="col-10">
                             <h3>
@@ -89,7 +89,7 @@
                 </div>
             </div>
             <div class="col-lg-6 col-12">
-                <div class="shadow bg-white p-4 mb-4 rounded-3">
+                <div class="shadow p-4 mb-4 rounded-3">
                     <div class="row text-secondary">
                         <div class="col-10">
                             <h3>
