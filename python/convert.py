@@ -1,9 +1,8 @@
 from datetime import datetime
-from config import FOTMOB_FIXTURES_URL, MONGO_DSN, RAPIDAPI_KEY
+from config import FOTMOB_FIXTURES_URL, MONGO_DSN, RAPIDAPI_KEY, APP_URL
 from database import get_collections
 from fotmob import FotmobClient
 from league_converter import convert_league_payload
-
 
 def convert_league(league: dict, fotmob_client: FotmobClient, partidos_col):
     fotmob_league_id = league["fotmob_league_id"]
@@ -67,6 +66,15 @@ def main() -> None:
 
     print("Catálogo de ligas actualizado en MongoDB (quiniela.ligas).")
     print("Listo.")
+    
+    # Consumir el endpoint syncPuntos de la API de CodeIgniter
+    import requests
+    sync_url = f"{APP_URL}sync/syncPuntos"  # Ajusta la URL según tu configuración
+    response = requests.get(sync_url)
+    if response.status_code == 200:
+        print("Sincronización de puntos completada correctamente.")
+    else:
+        print(f"Error al sincronizar puntos: {response.status_code}")
 
 
 if __name__ == "__main__":

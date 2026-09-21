@@ -11,3 +11,4 @@ FOTMOB_FIXTURES_URL = os.getenv(
     "FOTMOB_FIXTURES_URL",
     "https://fotmob4.p.rapidapi.com/api/fotmob/v1/league/details/fixtures",
 )
+APP_URL = os.getenv("APP_URL")

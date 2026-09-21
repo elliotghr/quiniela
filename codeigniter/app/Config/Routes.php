@@ -6,6 +6,11 @@ use CodeIgniter\Router\RouteCollection;
  * @var RouteCollection $routes
  */
 
+$routes->group('/sync', ['namespace' => 'App\Controllers\Sync'], static function ($routes)
+{
+    $routes->get('syncPuntos', 'SyncController::syncPuntos');
+});
+
 $routes->group('', ['filter' => 'auth'], static function ($routes) 
 {
     $routes->group('/', ['namespace' => 'App\Controllers\Login'], static function ($routes)

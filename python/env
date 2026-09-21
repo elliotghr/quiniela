@@ -1,4 +1,5 @@
 PROJECT_PATH=/root/python
+APP_URL=http://192.168.5.132:8444/
 
 RAPIDAPI_KEY=
 FOTMOB_FIXTURES_URL=https://fotmob4.p.rapidapi.com/api/fotmob/v1/league/details/fixtures

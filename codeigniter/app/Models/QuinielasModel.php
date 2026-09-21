@@ -227,7 +227,16 @@ class QuinielasModel extends Model
 
         if(isset($filter['partidos_ids']))
         {
-            $builder->whereIn('P.partido', $filter['partidos_ids']);
+            $partidosIds = is_array($filter['partidos_ids'])
+                ? array_values(array_filter($filter['partidos_ids'], static fn($id) => $id !== null && $id !== ''))
+                : [];
+
+            if (empty($partidosIds)) {
+                // Evita SQL inválido: IN ()
+                $builder->where('1 = 0', null, false);
+            } else {
+                $builder->whereIn('P.partido', $partidosIds);
+            }
         }
 
         $query = $builder->get();

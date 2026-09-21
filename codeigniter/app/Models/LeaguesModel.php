@@ -61,8 +61,7 @@ class LeaguesModel extends Model
     public function getBdUpcomingFixtures(array $leagues)
     {
         $fixtures = [];
-        foreach ($leagues['ids'] as $league) 
-        {
+        foreach ($leagues['ids'] as $league) {
             $mongoLib = new MongoLib("quiniela", "partidos");
 
             $timestampActual = time();
@@ -134,6 +133,46 @@ class LeaguesModel extends Model
                 $fixtures[$fixture["fixture"]["id"]]["away_name"] = $fixture["teams"]['away']["name"];
                 $fixtures[$fixture["fixture"]["id"]]["away_logo"] = $fixture["teams"]['away']["logo"];
                 $fixtures[$fixture["fixture"]["id"]]["away_goals"] = $fixture["goals"]['away'];
+            }
+        }
+
+        return $fixtures;
+    }
+
+    public function getFixturesById(array $fixturesId)
+    {
+        // print_r($fixturesId);
+
+        $mongoLib = new MongoLib("quiniela", "partidos");
+        $response = $mongoLib->aggregate([
+            [
+                '$unwind' => '$response'
+            ],
+            [
+                '$match' => [
+                    'response.fixture.id' => [
+                        '$in' => $fixturesId
+                    ],
+                    'response.fixture.status.short' => 'FT'
+                ]
+            ],
+            [
+                '$replaceRoot' => [
+                    'newRoot' => '$response'
+                ]
+            ]
+        ]);
+
+        $data = iterator_to_array($response);
+
+        $fixtures = [];
+
+        foreach ($data as $fixture) {
+            if (in_array($fixture["fixture"]["id"], $fixturesId)) {
+                $fixtures[$fixture["fixture"]["id"]]["id"] = $fixture["fixture"]["id"];
+                $fixtures[$fixture["fixture"]["id"]]["home_goals"] = $fixture["goals"]['home'];
+                $fixtures[$fixture["fixture"]["id"]]["away_goals"] = $fixture["goals"]['away'];
+                $fixtures[$fixture["fixture"]["id"]]["round"] = $fixture["league"]["round"];
             }
         }
 

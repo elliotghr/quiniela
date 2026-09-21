@@ -77,12 +77,12 @@ class Filters extends BaseFilters
             // 'honeypot',
             // 'csrf',
             // 'invalidchars',
-            'auth',
+            'auth' => ['except' => ['sync/syncPuntos']],
         ],
         'after' => [
             // 'honeypot',
             // 'secureheaders',
-            'auth',
+            'auth' => ['except' => ['sync/syncPuntos']],
         ],
     ];
 
