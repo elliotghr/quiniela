@@ -8,9 +8,9 @@
                     <div class="row text-secondary">
                         <div class="col-10">
                             <h3>
-                                Próximos partidos
+                                <span class="me-3">Próximos partidos</span>
+                                <button class="btn btn-primary btnSave"><i class="fas fa-save"></i> Guardar</button>
                             </h3>
-                            <button class="btn btn-primary btnSave"><i class="fas fa-save"></i> Guardar</button>
                         </div>
                         <div class="col-2 text-end">
                             <h3>
@@ -28,12 +28,13 @@
             </div>
 
 
+
             <div class="col-lg-5 col-12">
                 <div class="shadow  p-4 mb-4 rounded-3">
                     <div class="row text-secondary">
                         <div class="col-10">
                             <h3>
-                                Últimos Marcadores
+                                Últimos Marcadores 
                             </h3>
                         </div>
                         <div class="col-2 text-end">
@@ -44,74 +45,10 @@
                     </div>
 
                     <hr />
-                    <?php $next = 0; ?>
-                    <?php $prev = 0; ?>
-                    <?php $stopPrev = false; ?>
-
-                    <?php if ($prev === 0): ?>
-                        No hay marcadores que mostrar
-                    <?php else: ?>
-                        <div class="table-container" style="max-height: 500px; overflow-y: auto;">
-                            <table class="table table-striped mt-3">
-                                <thead>
-                                    <tr>
-                                        <th class="col text-center" scope="col" style="width: 35%;">Local</th>
-                                        <th class="col text-center" scope="col" style="width: 30%;">Horario</th>
-                                        <th class="col text-center" scope="col" style="width: 35%;">Visitante</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <?php $from = ($prev - $mostrar + 1) <= 0 ? 1 : ($prev - $mostrar + 1); ?>
-                                    <?php $to = $prev; ?>
-                                    <?php $cont = count($fixtures); ?>
-                                    <?php foreach (array_reverse($fixtures) as $fixture): ?>
-                                        <?php if ($cont >= $from && $cont <= $to): ?>
-                                            <tr>
-                                                <td class="align-middle text-center">
-                                                    <table style="width: 100%;">
-                                                        <tr>
-                                                            <td style="width: 50%;">
-                                                                <img src="<?= $fixture["home_logo"] ?>" class="card-img-top" style="max-width: 50px; max-height: 50px;">
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>
-                                                                <?= $fixture["home_name"] ?>
-                                                            </td>
-                                                        </tr>
-                                                    </table>
-                                                </td>
-                                                <td class="align-middle text-center">
-                                                    <?php if (is_null($fixture["home_goals"]) || is_null($fixture["away_goals"])): ?>
-                                                        <?= date_format(new DateTime($fixture["date"]), "d-M-Y"); ?>
-                                                        <br />
-                                                        <?= date_format(new DateTime($fixture["date"]), "H:i"); ?>
-                                                    <?php else: ?>
-                                                        <?= $fixture["home_goals"] ?> - <?= $fixture["away_goals"] ?>
-                                                    <?php endif; ?>
-                                                </td>
-                                                <td class="align-middle text-center">
-                                                    <table style="width: 100%;">
-                                                        <tr>
-                                                            <td style="width: 50%;">
-                                                                <img src="<?= $fixture["away_logo"] ?>" class="card-img-top" style="max-width: 50px; max-height: 50px;">
-                                                            </td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>
-                                                                <?= $fixture["away_name"] ?>
-                                                            </td>
-                                                        </tr>
-                                                    </table>
-                                                </td>
-                                            </tr>
-                                        <?php endif; ?>
-                                        <?php $cont--; ?>
-                                    <?php endforeach; ?>
-                                </tbody>
-                            </table>
-                        <?php endif; ?>
-                        </div>
+                    
+                    <div class="table-container" style="max-height: 500px; overflow-y: auto;">
+                        <?= $lastResults; ?>
+                    </div>
                 </div>
             </div>
         </div>

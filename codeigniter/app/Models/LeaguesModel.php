@@ -58,15 +58,13 @@ class LeaguesModel extends Model
 
         return $fixtures;
     }
-    public function getBdUpcomingFixtures(array $leagues)
+
+    public function getMultipleFixtures(array $leagues, int $startDate, int $endDate)
     {
         $fixtures = [];
         foreach ($leagues['ids'] as $league) 
         {
             $mongoLib = new MongoLib("quiniela", "partidos");
-
-            $timestampActual = time();
-            $timestampUpcomingLimit = $timestampActual + (8 * 24 * 60 * 60);
 
             $pipeline = [
                 [
@@ -81,8 +79,8 @@ class LeaguesModel extends Model
                 [
                     '$match' => [
                         'response.fixture.timestamp' => [
-                            '$gte' => $timestampActual,
-                            '$lte' => $timestampUpcomingLimit
+                            '$gte' => $startDate,
+                            '$lte' => $endDate
                         ]
                     ]
                 ],
@@ -110,6 +108,22 @@ class LeaguesModel extends Model
             }
         }
         return $fixtures;
+    }
+
+    public function getBdUpcomingFixtures(array $leagues)
+    {
+        $timestampActual = time();
+        $timestampUpcomingLimit = $timestampActual + (8 * 24 * 60 * 60);
+
+        return $this->getMultipleFixtures($leagues,$timestampActual,$timestampUpcomingLimit);
+    }
+
+    public function getBdMatchResults(array $leagues)
+    {
+        $timestampActual = time();
+        $timestampStart = $timestampActual - (8 * 24 * 60 * 60);
+
+        return $this->getMultipleFixtures($leagues,$timestampStart,$timestampActual);
     }
 
     public function getFixture($league)
