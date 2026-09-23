@@ -8,22 +8,19 @@
     <div class="form-floating mb-3">
         <select id="ligaId" name="ligaId" class="form-select modal-text" data-validate="required" data-validate-label="Liga">
             <option value="">-- Selecciona una liga --</option>
-            <?php foreach($leagues as $id => $league): ?>
-                <option value="<?=$id?>"><?=$league['name']?></option>
+            <?php foreach ($leagues as $id => $league): ?>
+                <option value="<?= $id ?>"><?= $league['name'] ?></option>
             <?php endforeach; ?>
         </select>
         <label for="ligaId">Liga</label>
     </div>
 
     <div class="form-floating mb-3">
-        <input id="temporada" name="temporada" type="text" class="form-control modal-text" placeholder="" data-validate="required" data-validate-label="Temporada" value="<?=date('Y')?>">
+        <input id="temporada" name="temporada" type="text" class="form-control modal-text" placeholder="" data-validate="required" data-validate-label="Temporada" value="<?= date('Y') ?>">
         <label for="temporada">Temporada</label>
     </div>
 
-    <div class="form-floating mb-3">
-        <input id="nombre" name="nombre" type="text" class="form-control modal-text" placeholder="" data-validate="required" data-validate-label="Nombre">
-        <label for="nombre">Nombre de la Quiniela</label>
-    </div>
+    <input id="nombre" name="nombre" type="text" class="form-control modal-text" placeholder="" style="display: none;">
 
     <div class="form-floating mb-3">
         <input id="fechaInicio" name="fechaInicio" type="datetime-local" class="form-control modal-text" placeholder="" data-validate="required" data-validate-label="Fecha límite">
