@@ -41,6 +41,8 @@
     </script>
 
     <script src="/js/header.js"></script>
+    <script src="/js/highcharts.js"></script>
+    <script src="/js/general/chart.js"></script>
 
     <!-- FAVICON -->
     <link rel="apple-touch-icon" sizes="57x57" href="/favicon/apple-icon-57x57.png">

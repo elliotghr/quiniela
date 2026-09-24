@@ -5,6 +5,7 @@ namespace App\Controllers\Quinielas;
 use App\Controllers\BaseController;
 use App\Models\QuinielasModel;
 use App\Models\LeaguesModel;
+use App\Models\PartidoModel;
 use App\Models\UserModel;
 use App\Libraries\MongoLib;
 use DateTime;
@@ -16,6 +17,7 @@ class MisQuinielasController extends BaseController
         $this->quinielasModel = new QuinielasModel();
         $this->leaguesModel = new LeaguesModel();
         $this->userModel = new UserModel();
+        $this->partidoModel = new PartidoModel();
     }
 
     public function index()
@@ -48,6 +50,46 @@ class MisQuinielasController extends BaseController
         echo view('Templates/footer', $data);
     }
 
+        public function getDataGrafica($quinielaId)
+    {
+        $resultados = $this->partidoModel->getPuntosPorJornada($quinielaId);
+
+        $resultados = $resultados->getResultArray();
+
+        $categorias = [];
+        $usuarios = [];
+
+        foreach ($resultados as $row) {
+
+            // Jornadas
+            if (!isset($categorias[$row['orden']])) {
+                $categorias[$row['orden']] = $row['nombre_jornada'];
+            }
+
+            // Usuarios
+            if (!isset($usuarios[$row['usuario_id']])) {
+                $usuarios[$row['usuario_id']] = [
+                    'name' => $row['nombre'],
+                    'data' => []
+                ];
+            }
+
+            $usuarios[$row['usuario_id']]['data'][] =
+                (int) $row['puntos_acumulados'];
+        }
+
+        ksort($categorias);
+
+        $data = [
+            'categories' => array_values($categorias),
+            'series' => array_values($usuarios)
+        ];
+
+        log_message('debug', print_r($data, true));
+
+        return $data;
+    }
+
     public function getGlobal()
     {
         $data['status'] = "OK";
@@ -68,6 +110,8 @@ class MisQuinielasController extends BaseController
 
         $data['participantes'] = $this->calcularPuntos($participantes, $partidos, $fixtures);
         $data['participantes'] = util_arraySort($data['participantes'], 'puntos', SORT_DESC);
+
+        $data['grafica'] = $this->getDataGrafica($quinielaRow['quiniela_id']);
 
         $data['mostrar_resultados'] = $quinielaRow['fecha_inicio'] > date('Y-m-d') ? false : true;
         $data['inTime'] = date_format(new DateTime($quinielaRow['fecha_inicio']), "c") >= date_format(new DateTime(), "c") ? true : false;
@@ -127,6 +171,8 @@ class MisQuinielasController extends BaseController
         $data['mostrar_resultados'] = $fixtureData !== null && !is_null($fixtureData['home_goals']) && !is_null($fixtureData['away_goals']);
         // la fecha de inicio es mayor o igual al momento actual?
         $data['inTime'] = date_format(new DateTime($quinielaRow['fecha_inicio']), "c") >= date_format(new DateTime(), "c");
+
+        $data['grafica'] = [];
         $data['dataTable'] = view('Quinielas/MisQuinielas/scores', $data);
 
         return json_encode($data);

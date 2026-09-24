@@ -10,23 +10,30 @@
             <th class="col text-center" scope="col"></th>
             <th class="col text-center d-none d-lg-block" scope="col">&nbsp;</th>
             <th class="col text-center" scope="col">Nombre</th>
+
             <?php if (isset($marcador)): ?>
                 <th class="col text-center" scope="col">Marcador</th>
             <?php endif; ?>
+
             <th class="col text-center" colspan="2" scope="col">Puntos</th>
         </tr>
     </thead>
+
     <tbody>
         <?php $cont = 0; ?>
         <?php $aux = null; ?>
+
         <?php foreach ($participantes as $participante): ?>
+
             <?php if ($aux !== $participante['puntos']): ?>
                 <?php $cont += 1; ?>
                 <?php $aux = $participante['puntos']; ?>
             <?php endif; ?>
+
             <tr>
                 <td class="align-middle text-center fs-4">
                     <?= $cont ?>&nbsp;
+
                     <?php if ($cont <= 3): ?>
                         <i class="fas fa-crown place-<?= $cont ?>"></i>
                     <?php else: ?>
@@ -37,19 +44,32 @@
                 <td class="align-middle text-center d-none d-lg-block">
                     <div class="avatar-50px">
                         <div>
-                            <img src="<?= os_loadImage('avatar/' . $participante['usuario_avatar']) ?>" alt="avatar" class="mx-auto d-block">
+                            <img
+                                src="<?= os_loadImage('avatar/' . $participante['usuario_avatar']) ?>"
+                                alt="avatar"
+                                class="mx-auto d-block">
                         </div>
                     </div>
                 </td>
 
                 <td class="align-middle text-start">
-                    <?= $participante['usuario_nombre'] ?> <?= $participante['usuario_apellido_paterno'] ?> <?= $participante['usuario_apellido_materno'] ?> (<?= $participante['pronostico_consecutivo'] ?>)
+                    <?= $participante['usuario_nombre'] ?>
+                    <?= $participante['usuario_apellido_paterno'] ?>
+                    <?= $participante['usuario_apellido_materno'] ?>
+                    (<?= $participante['pronostico_consecutivo'] ?>)
                 </td>
 
                 <?php if (isset($marcador)): ?>
                     <td class="align-middle text-center">
-                        <?php if (isset($participante['partido_pronostico_local']) && isset($participante['partido_pronostico_visitante'])): ?>
-                            <?= $participante['partido_pronostico_local'] ?> - <?= $participante['partido_pronostico_visitante'] ?>
+                        <?php if (
+                            isset($participante['partido_pronostico_local']) &&
+                            isset($participante['partido_pronostico_visitante'])
+                        ): ?>
+
+                            <?= $participante['partido_pronostico_local'] ?>
+                            -
+                            <?= $participante['partido_pronostico_visitante'] ?>
+
                         <?php else: ?>
                             ?
                         <?php endif; ?>
@@ -60,6 +80,24 @@
                     <?= $participante['puntos'] ?>
                 </td>
             </tr>
+
         <?php endforeach; ?>
     </tbody>
 </table>
+
+
+<!-- Gráfica -->
+<div id="quiniela-chart"></div>
+
+<script>
+    renderLineChart(
+        'quiniela-chart',
+        <?= isset($grafica['categories']) ? json_encode($grafica['categories']) : '[]' ?>,
+        <?= isset($grafica['series']) ? json_encode($grafica['series']) : '[]' ?>,
+        {
+            title: 'Puntos por jornada',
+            xAxisTitle: 'Jornada',
+            yAxisTitle: 'Puntos'
+        }
+    );
+</script>
