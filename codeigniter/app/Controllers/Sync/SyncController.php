@@ -20,14 +20,39 @@ class SyncController extends BaseController
     {
         // Obtener todos los partidos que son NULL en el campo 'puntos'
         $partidosSinPuntos = $this->partidoModel->where('puntos', null)->findAll();
+        // Obtener los partidos que tienen pronósticos registrados
+        // $partidosSinPuntos = $this->partidoModel->where(['pronostico_local !=' => null, 'pronostico_visitante !=' => null])->findAll();
 
-        // Obtener el campo 'partido' de los partidos sin puntos
+
+        // Generar un diccionario de id, id_partido, pronostico_local y pronostico_visitante
+        $partidosDict = [];
+        foreach ($partidosSinPuntos as $partido) {
+            $partidosDict[$partido['id']] = [
+                'id' => $partido['id'],
+                'partido' => $partido['partido'],
+                'pronostico_local' => $partido['pronostico_local'],
+                'pronostico_visitante' => $partido['pronostico_visitante']
+            ];
+        }
+
+        echo "<h2>Partidos Dict</h2>";
+        echo "<pre>";
+        print_r($partidosDict);
+        echo "</pre>";
+
+        // Generar un diccionario de id, id_partido, pronostico_local y pronostico_visitante
         $partidosIds = array_column($partidosSinPuntos, 'partido');
         $fixturesId = array_values(array_unique(array_map('intval', $partidosIds)));
+
+        echo "<h2>Fixtures IDs from SQL</h2>";
+        echo "<pre>";
+        print_r($partidosIds);
+        echo "</pre>";
 
         // Obtener todos los partidos de mongo que estén terminados y cuyos IDs estén en $partidosIds
         $fixturesMongo = $this->leaguesModel->getFixturesById($fixturesId);
 
+        echo "<h2>Fixtures from MongoDB</h2>";
         // Imprimir los fixtures obtenidos de MongoDB
         echo "<pre>";
         print_r($fixturesMongo);
@@ -39,10 +64,12 @@ class SyncController extends BaseController
         echo "<pre>";
         print_r($jornadas);
         echo "</pre>";
-
+        // return;
         // Actualizar los puntos de los partidos y la jornada en la base de datos
-        foreach ($partidosSinPuntos as $partido) {
+        foreach ($partidosDict as $partido) {
+            // Obtener el ID del fixture correspondiente al partido (SQL)
             $fixtureId = intval($partido['partido']);
+            // Verificar si el fixture correspondiente existe en MongoDB
             if (isset($fixturesMongo[$fixtureId])) {
                 $homeGoals = $fixturesMongo[$fixtureId]['home_goals'];
                 $awayGoals = $fixturesMongo[$fixtureId]['away_goals'];
@@ -68,9 +95,13 @@ class SyncController extends BaseController
                 }
 
                 $puntos = 0;
-                if ($homeGoals > $awayGoals) {
+                // Si el pronóstico coincide exactamente con el resultado del partido, se otorgan 3 puntos
+                if ($homeGoals == $partido['pronostico_local'] && $awayGoals == $partido['pronostico_visitante']) {
                     $puntos = 3;
-                } elseif ($homeGoals == $awayGoals) {
+                // Si el pronóstico no coincide exactamente pero acierta el resultado (ganador o empate), se otorga 1 punto
+                } elseif (($homeGoals > $awayGoals && $partido['pronostico_local'] > $partido['pronostico_visitante']) ||
+                          ($homeGoals < $awayGoals && $partido['pronostico_local'] < $partido['pronostico_visitante']) ||
+                          ($homeGoals == $awayGoals && $partido['pronostico_local'] == $partido['pronostico_visitante'])) {
                     $puntos = 1;
                 }
 
