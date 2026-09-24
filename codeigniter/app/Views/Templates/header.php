@@ -1,6 +1,5 @@
 <!doctype html>
-<html lang="en" data-bs-theme="dark">
-<!-- <html lang="en"> -->
+<html lang="es" data-bs-theme="dark">
 
 <head>
     <!-- Required meta tags -->
@@ -10,30 +9,30 @@
     <title><?= esc($title) ?></title>
 
     <style>
-        [data-dark="dark-icon"],
-        [data-dark="light-icon"] {
+        [data-theme="dark-icon"],
+        [data-theme="light-icon"] {
             display: none;
         }
 
-        [data-bs-theme="dark"] [data-dark="dark-icon"] {
+        [data-bs-theme="dark"] [data-theme="dark-icon"] {
             display: block;
         }
 
-        [data-bs-theme="dark"] [data-dark="light-icon"] {
+        [data-bs-theme="dark"] [data-theme="light-icon"] {
             display: none;
         }
 
-        [data-bs-theme="light"] [data-dark="light-icon"] {
+        [data-bs-theme="light"] [data-theme="light-icon"] {
             display: block;
         }
 
-        [data-bs-theme="light"] [data-dark="dark-icon"] {
+        [data-bs-theme="light"] [data-theme="dark-icon"] {
             display: none;
         }
     </style>
 
     <script>
-        (function () {
+        (function() {
             const savedTheme = localStorage.getItem('darkMode');
             const preferredTheme = savedTheme || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
             document.documentElement.setAttribute('data-bs-theme', preferredTheme);

@@ -1,20 +1,20 @@
 document.addEventListener("DOMContentLoaded", function () {
   initializeTheme();
 
-  const darkOptionElements = document.querySelectorAll("[data-dark-option]");
+  const darkOptionElements = document.querySelectorAll("[data-theme-option]");
 
   darkOptionElements.forEach((element) => {
     element.addEventListener("click", function (event) {
       event.preventDefault();
-      const option = this.getAttribute("data-dark-option");
+      const option = this.getAttribute("data-theme-option");
       toggleTheme(option);
     });
   });
 });
 
 function setThemeIcons(theme) {
-  const darkIcon = document.querySelector("[data-dark='dark-icon']");
-  const lightIcon = document.querySelector("[data-dark='light-icon']");
+  const darkIcon = document.querySelector("[data-theme='dark-icon']");
+  const lightIcon = document.querySelector("[data-theme='light-icon']");
 
   if (!darkIcon || !lightIcon) {
     return;
@@ -30,10 +30,10 @@ function setThemeIcons(theme) {
 }
 
 function setThemeOptionActive(theme) {
-  const options = document.querySelectorAll("[data-dark-option]");
+  const options = document.querySelectorAll("[data-theme-option]");
 
   options.forEach((option) => {
-    const optionTheme = option.getAttribute("data-dark-option") === "dark-icon" ? "dark" : "light";
+    const optionTheme = option.getAttribute("data-theme-option") === "dark-icon" ? "dark" : "light";
     option.classList.toggle("active", optionTheme === theme);
   });
 }

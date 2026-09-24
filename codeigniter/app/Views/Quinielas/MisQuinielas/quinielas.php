@@ -14,7 +14,10 @@
         <tbody style="cursor: pointer;">
             <?php foreach ($quinielas->getResultArray() as $rowQuiniela): ?>
                 <tr data-action="viewQuiniela" data-id="<?= $rowQuiniela['quiniela_id'] ?>">
-                    <td class="align-middle"><img src="<?= $leagues[$rowQuiniela["liga"]]["logo_dark"] ?>" class="card-img-top" style="max-width: 75px; max-height: 75px;"></td>
+                    <td class="align-middle">
+                        <img src="<?= $leagues[$rowQuiniela["liga"]]["logo_dark"] ?>" class="card-img-top img-dark" data-theme="dark-icon" style="max-width: 75px; max-height: 75px;">
+                        <img src="<?= $leagues[$rowQuiniela["liga"]]["logo_light"] ?>" class="card-img-top img-light" data-theme="light-icon" style="max-width: 75px; max-height: 75px;">
+                    </td>
                     <td class="align-middle"><?= $leagues[$rowQuiniela["liga"]]["name"] ?></td>
                     <td class="align-middle"><?= $rowQuiniela['temporada'] ?></td>
                     <td class="align-middle"><?= date_format(date_create($leagues[$rowQuiniela["liga"]]["start"]), "d/M") ?></td>
